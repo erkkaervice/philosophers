@@ -6,81 +6,89 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:49 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/02 14:48:04 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/02 15:17:20 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-// Function to cleanup resources
-void cleanup(t_data *data, t_philo *philos)
+void	print_log(t_data *data, int id, char *msg)
 {
-    int i;
+	long long	time;
 
-    // Join threads
-    i = 0;
-    while (i < data->num_philos)
-    {
-        if (pthread_join(philos[i].thread, NULL) != 0)
-        {
-            printf("Error joining thread for philosopher %d\n", philos[i].id);
-            // Handle error gracefully, continue joining others
-        }
-        i++;
-    }
-
-    // Destroy mutexes
-    pthread_mutex_destroy(&data->write_lock);
-    pthread_mutex_destroy(&data->sim_stop_lock);
-
-    // Destroy forks mutexes
-    i = 0;
-    while (i < data->num_philos)
-    {
-        pthread_mutex_destroy(&data->forks[i]);
-        i++;
-    }
-
-    // Free allocated memory
-    free(data->forks);
-    free(philos);
-    free(data);
+	pthread_mutex_lock(&data->write_lock);
+	time = get_time() - data->start_time;
+	printf("%lld %d %s\n", time, id, msg);
+	pthread_mutex_unlock(&data->write_lock);
 }
 
-int main(int argc, char **argv)
+long long	get_time(void)
 {
-    t_data  *data;
-    t_philo *philos;
+	struct timeval	tv;
+	long long		ms;
 
-    // Check the number of arguments
-    if (argc != 5 && argc != 6)
-    {
-        printf("Usage: ./philo <num_philos> <time_to_die> <time_to_eat> <time_to_sleep> [must_eat]\n");
-        return (1);
-    }
+	gettimeofday(&tv, NULL);
+	ms = (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+	return (ms);
+}
 
-    // Initialize the philosopher data and structures
-    data = init_data(argc, argv);
-    if (!data)
-    {
-        printf("Error: Initialization failed.\n");
-        return (1);
-    }
+void	ft_usleep(long long ms)
+{
+	long long	start_time;
 
-    // Allocate memory for philosophers
-    philos = data->philos;  // We now use the philosophers already allocated in init_data
+	start_time = get_time();
+	while (get_time() - start_time < ms)
+		usleep(100);
+}
 
-    // Start philosopher threads
-    start_threads(data, philos);
+void	cleanup(t_data *data, t_philo *philos)
+{
+	int i;
 
-    // Monitor the simulation and stop when needed
-    while (!check_simulation_status(data, philos)) // Continually check simulation status
-    {
-        usleep(100);  // A small delay to prevent 100% CPU usage, adjust as needed
-    }
+	i = 0;
+	while (i < data->num_philos)
+	{
+		if (pthread_join(philos[i].thread, NULL) != 0)
+		{
+			printf("Error joining thread for philosopher %d\n", philos[i].id);
+		}
+		i++;
+	}
+	pthread_mutex_destroy(&data->write_lock);
+	pthread_mutex_destroy(&data->sim_stop_lock);
+	i = 0;
+	while (i < data->num_philos)
+	{
+		pthread_mutex_destroy(&data->forks[i]);
+		i++;
+	}
+	free(data->forks);
+	free(philos);
+	free(data);
+}
 
-    // Clean up resources after the simulation
-    cleanup(data, philos);
+int	main(int argc, char **argv)
+{
+	t_data	*data;
+	t_philo	*philos;
 
-    return (0);
+	if (argc != 5 && argc != 6)
+	{
+		printf("Usage: ./philo <num_philos> <time_to_die> <time_to_eat> <time_to_sleep> [must_eat]\n");
+		return (1);
+	}
+	data = init_data(argc, argv);
+	if (!data)
+	{
+		printf("Error: Initialization failed.\n");
+		return (1);
+	}
+	philos = data->philos;
+	start_threads(data, philos);
+	while (!check_simulation_status(data, philos))
+	{
+		usleep(100);
+	}
+	cleanup(data, philos);
+	return (0);
 }

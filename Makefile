@@ -6,7 +6,7 @@
 #    By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/02 15:36:34 by eala-lah          #+#    #+#              #
-#    Updated: 2025/04/02 13:06:29 by eala-lah         ###   ########.fr        #
+#    Updated: 2025/04/02 15:10:41 by eala-lah         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,11 +18,7 @@ LIBFT       = $(LIBFT_DIR)/libft.a
 SRC_DIR     = src/
 SRC         = \
 	init.c \
-	sim_loop.c \
-	actions.c \
-	monitoring.c \
-	time.c \
-	utils.c \
+	simulation.c \
 	main.c
 
 OBJ_DIR     = obj/
