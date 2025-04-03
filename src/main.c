@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:49 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/02 15:17:20 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/03 10:59:15 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,15 +43,14 @@ void	ft_usleep(long long ms)
 
 void	cleanup(t_data *data, t_philo *philos)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < data->num_philos)
 	{
 		if (pthread_join(philos[i].thread, NULL) != 0)
-		{
-			printf("Error joining thread for philosopher %d\n", philos[i].id);
-		}
+			printf("Error joining thread for philosopher %d\n",
+				philos[i].id);
 		i++;
 	}
 	pthread_mutex_destroy(&data->write_lock);
@@ -74,7 +73,8 @@ int	main(int argc, char **argv)
 
 	if (argc != 5 && argc != 6)
 	{
-		printf("Usage: ./philo <num_philos> <time_to_die> <time_to_eat> <time_to_sleep> [must_eat]\n");
+		printf("Usage: ./philo <num_philos> <time_to_die> <time_to_eat> "
+			"<time_to_sleep> [must_eat]\n");
 		return (1);
 	}
 	data = init_data(argc, argv);
@@ -86,9 +86,7 @@ int	main(int argc, char **argv)
 	philos = data->philos;
 	start_threads(data, philos);
 	while (!check_simulation_status(data, philos))
-	{
 		usleep(100);
-	}
 	cleanup(data, philos);
 	return (0);
 }

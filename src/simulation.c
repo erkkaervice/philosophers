@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:27 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/02 15:18:29 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/03 11:02:45 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	start_threads(t_data *data, t_philo *philos)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < data->num_philos)
@@ -22,7 +22,7 @@ void	start_threads(t_data *data, t_philo *philos)
 		if (pthread_create(&philos[i].thread, NULL, routine, &philos[i]) != 0)
 		{
 			printf("Error creating thread for philosopher %d\n", philos[i].id);
-			return;
+			return ;
 		}
 		i++;
 	}
@@ -32,7 +32,7 @@ void	start_threads(t_data *data, t_philo *philos)
 		if (pthread_join(philos[i].thread, NULL) != 0)
 		{
 			printf("Error joining thread for philosopher %d\n", philos[i].id);
-			return;
+			return ;
 		}
 		i++;
 	}
@@ -47,31 +47,29 @@ void	*routine(void *arg)
 	{
 		eat(philo);
 		sleep_think(philo);
-		if (check_simulation_status(philo->data, philo->data->philos))
+		pthread_mutex_lock(&philo->data->sim_stop_lock);
+		if (philo->data->sim_stop)
 		{
+			pthread_mutex_unlock(&philo->data->sim_stop_lock);
 			print_log(philo->data, philo->id, "stopped simulation");
-			break;
+			break ;
 		}
+		pthread_mutex_unlock(&philo->data->sim_stop_lock);
 	}
 	return (NULL);
 }
 
 int	check_simulation_status(t_data *data, t_philo *philos)
 {
-	int i;
+	int	i;
 
-	if (!data || !philos)
-	{
-		printf("Error: Invalid data or philosopher pointers\n");
-		return (1);
-	}
-	i = 0;
 	pthread_mutex_lock(&data->sim_stop_lock);
 	if (data->sim_stop)
 	{
 		pthread_mutex_unlock(&data->sim_stop_lock);
 		return (1);
 	}
+	i = 0;
 	while (i < data->num_philos)
 	{
 		if (get_time() - philos[i].last_meal >= data->time_to_die)
@@ -98,8 +96,10 @@ void	eat(t_philo *philo)
 	pthread_mutex_lock(second);
 	print_log(philo->data, philo->id, "is eating");
 	ft_usleep(philo->data->time_to_eat);
+	pthread_mutex_lock(&philo->data->sim_stop_lock);
 	philo->last_meal = get_time();
 	philo->meals_eaten++;
+	pthread_mutex_unlock(&philo->data->sim_stop_lock);
 	pthread_mutex_unlock(second);
 	pthread_mutex_unlock(first);
 }
