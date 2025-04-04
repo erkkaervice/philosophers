@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:41 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/04 15:10:55 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/04 15:42:22 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ typedef struct s_data
 	int				time_to_die;
 	int				time_to_eat;
 	int				time_to_sleep;
-	int				must_eat;
 	int				sim_stop;
 	long long		start_time;
 	pthread_mutex_t	*forks;

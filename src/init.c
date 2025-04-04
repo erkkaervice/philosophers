@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 15:30:10 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/04 15:32:41 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/04 15:42:23 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,6 @@ static t_data	*init_alloc_data(char **av)
 	data->time_to_sleep = ft_atoi(av[4]);
 	data->sim_stop = 0;
 	data->start_time = get_time();
-
 	return (data);
 }
 
