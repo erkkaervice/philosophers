@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:27 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/04 14:42:45 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/04 15:17:54 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void	*routine(void *arg)
 			pthread_mutex_lock(&philo->data->write_lock);
 			ft_printf("Philosopher %d has died\n", philo->id);
 			pthread_mutex_unlock(&philo->data->write_lock);
-			exit(0);
+			break ;
 		}
 		eat(philo);
 		pthread_mutex_lock(&philo->data->sim_stop_lock);
@@ -146,7 +146,9 @@ void	eat(t_philo *philo)
 	first = philo->left_fork;
 	second = philo->right_fork;
 	pthread_mutex_lock(first);
+	print_log(philo->data, philo->id, "has taken a fork");
 	pthread_mutex_lock(second);
+	print_log(philo->data, philo->id, "has taken a fork");
 	print_log(philo->data, philo->id, "is eating");
 	ft_usleep(philo->data->time_to_eat);
 	pthread_mutex_lock(&philo->data->sim_stop_lock);
