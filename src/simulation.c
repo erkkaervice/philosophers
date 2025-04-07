@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:27 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/07 14:18:56 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/07 15:32:15 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,7 @@ void	start_threads(t_data *data, t_philo *philos)
 	while (i < data->num_philos)
 	{
 		if (pthread_create(&philos[i].thread, NULL, routine, &philos[i]) != 0)
-		{
-			ft_printf("Error creating thread for philosopher %d\n", philos[i].id);
 			return ;
-		}
 		philos[i].thread_done = 0;
 		i++;
 	}
@@ -36,7 +33,8 @@ void	start_threads(t_data *data, t_philo *philos)
 	{
 		pthread_mutex_lock(&philos[i].data->sim_stop_lock);
 		while (!philos[i].thread_done)
-			pthread_cond_wait(&philos[i].done_cond, &philos[i].data->sim_stop_lock);
+			pthread_cond_wait(&philos[i].done_cond,
+				&philos[i].data->sim_stop_lock);
 		pthread_mutex_unlock(&philos[i].data->sim_stop_lock);
 		pthread_join(philos[i].thread, NULL);
 		i++;
@@ -86,8 +84,7 @@ int	check_simulation_status(t_data *data, t_philo *philos)
 		pthread_mutex_lock(&data->sim_stop_lock);
 		last_meal = philos[i].last_meal;
 		pthread_mutex_unlock(&data->sim_stop_lock);
-		current_time = get_time();
-		if (current_time - last_meal >= data->time_to_die)
+		if ((current_time = get_time()) - last_meal >= data->time_to_die)
 		{
 			pthread_mutex_lock(&data->sim_stop_lock);
 			data->sim_stop = 1;

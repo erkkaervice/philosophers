@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:49 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/04 15:33:30 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/07 15:29:54 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,8 @@ void	ft_usleep(long long ms)
 
 void	cleanup(t_data *data, t_philo *philos)
 {
-	int	i;
+	int				i;
+	pthread_mutex_t	*lock;
 
 	if (philos)
 	{
@@ -52,18 +53,13 @@ void	cleanup(t_data *data, t_philo *philos)
 		{
 			if (data->num_philos > 1)
 			{
-				pthread_mutex_lock(&philos[i].data->sim_stop_lock);
+				lock = &philos[i].data->sim_stop_lock;
+				pthread_mutex_lock(lock);
 				while (!philos[i].thread_done)
-					pthread_cond_wait(&philos[i].done_cond, &philos[i].data->sim_stop_lock);
-				pthread_mutex_unlock(&philos[i].data->sim_stop_lock);
-			}
-			i++;
-		}
-		i = 0;
-		while (i < data->num_philos)
-		{
-			if (data->num_philos > 1)
+					pthread_cond_wait(&philos[i].done_cond, lock);
+				pthread_mutex_unlock(lock);
 				pthread_mutex_destroy(&data->forks[i]);
+			}
 			i++;
 		}
 		free(philos);
@@ -81,28 +77,12 @@ int	main(int ac, char **av)
 
 	if (ac != 5)
 	{
-		ft_printf("Usage: ./philo <num_philos> <time_to_die> <time_to_eat> "
-			"<time_to_sleep>\n");
+		ft_printf("Usage: ./philo <# of philos> <die> <eat> <sleep>\n");
 		return (1);
 	}
 	data = init_data(ac, av);
 	if (!data)
-	{
-		ft_printf("Error: Initialization failed.\n");
 		return (1);
-	}
-	if (data->time_to_die <= 0 || data->time_to_eat <= 0 || data->time_to_sleep <= 0)
-	{
-		ft_printf("Error: Time values must be positive.\n");
-		free(data);
-		return (1);
-	}
-	if (data->num_philos == 1)
-	{
-		ft_printf("Simulation stopped: Only one philosopher, no interaction possible.\n");
-		cleanup(data, NULL);
-		return (0);
-	}
 	philos = data->philos;
 	start_threads(data, philos);
 	while (1)
@@ -111,12 +91,10 @@ int	main(int ac, char **av)
 		if (data->sim_stop)
 		{
 			pthread_mutex_unlock(&data->sim_stop_lock);
-			ft_printf("Simulation has ended due to a philosopher's death.\n");
 			cleanup(data, philos);
-			exit(0);
+			return (0);
 		}
 		pthread_mutex_unlock(&data->sim_stop_lock);
-		usleep(100);
 	}
 	return (0);
 }

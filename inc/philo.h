@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:41 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/04 15:42:22 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/07 15:30:08 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ typedef struct s_data
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	write_lock;
 	pthread_mutex_t	sim_stop_lock;
-	pthread_mutex_t last_meal_lock;
+	pthread_mutex_t	last_meal_lock;
 	t_philo			*philos;
 }	t_data;
 
