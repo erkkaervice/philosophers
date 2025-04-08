@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:27 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/07 15:32:15 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/08 11:58:01 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,10 +101,26 @@ int	check_simulation_status(t_data *data, t_philo *philos)
 
 void	eat(t_philo *philo)
 {
+	pthread_mutex_lock(&philo->data->sim_stop_lock);
+	if (philo->data->sim_stop)
+	{
+		pthread_mutex_unlock(&philo->data->sim_stop_lock);
+		return ;
+	}
+	pthread_mutex_unlock(&philo->data->sim_stop_lock);
+
 	pthread_mutex_lock(philo->left_fork);
+	pthread_mutex_lock(&philo->data->sim_stop_lock);
+	if (philo->data->sim_stop)
+	{
+		pthread_mutex_unlock(&philo->data->sim_stop_lock);
+		pthread_mutex_unlock(philo->left_fork);
+		return ;
+	}
 	print_log(philo->data, philo->id, "has taken a fork");
+	pthread_mutex_unlock(&philo->data->sim_stop_lock);
+
 	pthread_mutex_lock(philo->right_fork);
-	print_log(philo->data, philo->id, "has taken a fork");
 	pthread_mutex_lock(&philo->data->sim_stop_lock);
 	if (philo->data->sim_stop)
 	{
@@ -113,17 +129,22 @@ void	eat(t_philo *philo)
 		pthread_mutex_unlock(philo->left_fork);
 		return ;
 	}
+	print_log(philo->data, philo->id, "has taken a fork");
 	print_log(philo->data, philo->id, "is eating");
 	philo->last_meal = get_time();
 	pthread_mutex_unlock(&philo->data->sim_stop_lock);
+
 	ft_usleep(philo->data->time_to_eat);
+
 	pthread_mutex_lock(&philo->data->sim_stop_lock);
 	if (!philo->data->sim_stop)
 		philo->meals_eaten++;
 	pthread_mutex_unlock(&philo->data->sim_stop_lock);
+
 	pthread_mutex_unlock(philo->right_fork);
 	pthread_mutex_unlock(philo->left_fork);
 }
+
 
 void	sleep_think(t_philo *philo)
 {
