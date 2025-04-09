@@ -6,14 +6,14 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 15:30:10 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/09 13:22:50 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/09 13:35:01 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 /*
- * ft_initmutex - Initializes the mutexes for the forks.
+ * ft_initforks - Initializes the mutexes for the forks.
  *
  * This function allocates memory for the forks mutexes and initializes each
  * mutex. If memory allocation or mutex initialization fails, the function 
@@ -27,7 +27,7 @@
  * Returns:
  * - 0 on success, 1 on failure.
  */
-static int	ft_initmutex(t_data *data)
+static int	ft_initforks(t_data *data)
 {
 	int	i;
 
@@ -195,7 +195,7 @@ t_data	*ft_initdata(int ac, char **av)
 		free(data);
 		return (NULL);
 	}
-	if (ft_initmutex(data) || ft_initlocks(data)
+	if (ft_initforks(data) || ft_initlocks(data)
 		|| ft_initphilos(data, data->philos))
 	{
 		free(data);
