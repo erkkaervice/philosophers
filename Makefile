@@ -6,7 +6,7 @@
 #    By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/02 15:36:34 by eala-lah          #+#    #+#              #
-#    Updated: 2025/04/03 11:29:41 by eala-lah         ###   ########.fr        #
+#    Updated: 2025/04/08 15:29:50 by eala-lah         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,6 +19,7 @@ SRC_DIR     = src/
 SRC         = \
 	init.c \
 	simulation.c \
+	tasks.c \
 	main.c
 
 OBJ_DIR     = obj/

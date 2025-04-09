@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:41 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/08 12:17:06 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/09 11:20:08 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,5 +56,8 @@ void		start_threads(t_data *data, t_philo *philos);
 void		eat(t_philo *philo);
 void		sleep_think(t_philo *philo);
 int			check_simulation_status(t_data *data, t_philo *philos);
+int			check_sim_stopped(t_philo *philo);
+int			take_forks(t_philo *philo);
+int			check_if_philosopher_died(t_data *data, t_philo *philo);
 
 #endif
