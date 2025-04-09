@@ -6,22 +6,24 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:49 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/09 12:14:21 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/09 12:32:15 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-long long	ft_time(void)
-{
-	struct timeval	tv;
-	long long		ms;
-
-	gettimeofday(&tv, NULL);
-	ms = (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
-	return (ms);
-}
-
+/*
+ * ft_cleanup - Frees memory and destroys mutexes after the simulation ends.
+ *
+ * This function ensures that all dynamically allocated memory is freed, and 
+ * all mutexes used throughout the simulation are properly destroyed. This 
+ * includes cleaning up philosopher threads, mutexes used for forks, and 
+ * shared locks used for simulation control.
+ *
+ * Parameters:
+ * - data: A pointer to the data structure containing simulation details.
+ * - philos: A pointer to the array of philosopher structures.
+ */
 void	ft_cleanup(t_data *data, t_philo *philos)
 {
 	int				i;
@@ -51,6 +53,23 @@ void	ft_cleanup(t_data *data, t_philo *philos)
 	free(data);
 }
 
+/*
+ * main - The entry point of the simulation. Initializes data and philosophers,
+ *        starts threads, and manages the simulation loop.
+ *
+ * The function handles initialization of the simulation data, sets up 
+ * philosopher threads, and enters the main loop, which continuously checks 
+ * for the simulation's stop condition. Once the condition is met, it cleans 
+ * up the resources and exits the program.
+ *
+ * Parameters:
+ * - ac: The argument count (should be 5).
+ * - av: The argument values (parameters for simulation).
+ *
+ * Returns:
+ * - 0 if the simulation completes successfully.
+ * - 1 if the arguments are incorrect or an error occurs.
+ */
 int	main(int ac, char **av)
 {
 	t_data	*data;
