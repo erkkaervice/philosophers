@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 15:30:10 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/09 12:27:34 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/09 13:22:50 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,12 +189,7 @@ t_data	*ft_initdata(int ac, char **av)
 	if (!data)
 		return (NULL);
 	if (data->time_to_die <= 0 || data->time_to_eat <= 0
-		|| data->time_to_sleep <= 0)
-	{
-		free(data);
-		return (NULL);
-	}
-	if (data->num_philos == 1)
+		|| data->time_to_sleep <= 0 || data->num_philos == 1)
 	{
 		ft_printf("If a tree falls in a forest... are you an idiot?\n");
 		free(data);
