@@ -6,13 +6,13 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:27 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/09 11:46:47 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/09 11:54:45 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	start_threads(t_data *data, t_philo *philos)
+void	ft_threads(t_data *data, t_philo *philos)
 {
 	int	i;
 
@@ -21,12 +21,12 @@ void	start_threads(t_data *data, t_philo *philos)
 	i = 0;
 	while (i < data->num_philos)
 	{
-		if (pthread_create(&philos[i].thread, NULL, routine, &philos[i]) != 0)
+		if (pthread_create(&philos[i].thread, NULL, ft_routine, &philos[i]) != 0)
 			return ;
 		philos[i].thread_done = 0;
 		i++;
 	}
-	while (!check_simulation_status(data, philos))
+	while (!ft_status(data, philos))
 		ft_usleep(100);
 	i = 0;
 	while (i < data->num_philos)
@@ -36,17 +36,17 @@ void	start_threads(t_data *data, t_philo *philos)
 	}
 }
 
-void	*routine(void *arg)
+void	*ft_routine(void *arg)
 {
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
 	while (1)
 	{
-		if (check_sim_stopped(philo))
+		if (ft_stoplock(philo))
 			break ;
-		eat(philo);
-		sleep_think(philo);
+		ft_eat(philo);
+		ft_sleepthink(philo);
 	}
 	pthread_mutex_lock(&philo->data->sim_stop_lock);
 	philo->thread_done = 1;
@@ -55,7 +55,7 @@ void	*routine(void *arg)
 	return (NULL);
 }
 
-int	check_sim_stopped(t_philo *philo)
+int	ft_stoplock(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->data->sim_stop_lock);
 	if (philo->data->sim_stop)
@@ -67,7 +67,7 @@ int	check_sim_stopped(t_philo *philo)
 	return (0);
 }
 
-int	check_simulation_status(t_data *data, t_philo *philos)
+int	ft_status(t_data *data, t_philo *philos)
 {
 	int	i;
 
@@ -81,14 +81,14 @@ int	check_simulation_status(t_data *data, t_philo *philos)
 	i = 0;
 	while (i < data->num_philos)
 	{
-		if (check_if_philosopher_died(data, &philos[i]))
+		if (ft_reaper(data, &philos[i]))
 			return (1);
 		i++;
 	}
 	return (0);
 }
 
-int	check_if_philosopher_died(t_data *data, t_philo *philo)
+int	ft_reaper(t_data *data, t_philo *philo)
 {
 	long long	current_time;
 	long long	last_meal;
@@ -96,7 +96,7 @@ int	check_if_philosopher_died(t_data *data, t_philo *philo)
 	pthread_mutex_lock(&data->sim_stop_lock);
 	last_meal = philo->last_meal;
 	pthread_mutex_unlock(&data->sim_stop_lock);
-	current_time = get_time();
+	current_time = ft_time();
 	if (current_time - last_meal >= data->time_to_die)
 	{
 		pthread_mutex_lock(&data->sim_stop_lock);

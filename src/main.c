@@ -6,13 +6,13 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:49 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/09 11:13:54 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/09 11:50:48 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-long long	get_time(void)
+long long	ft_time(void)
 {
 	struct timeval	tv;
 	long long		ms;
@@ -22,7 +22,7 @@ long long	get_time(void)
 	return (ms);
 }
 
-void	cleanup(t_data *data, t_philo *philos)
+void	ft_cleanup(t_data *data, t_philo *philos)
 {
 	int				i;
 	pthread_mutex_t	*lock;
@@ -61,18 +61,18 @@ int	main(int ac, char **av)
 		ft_printf("Usage: ./philo <# of philos> <die> <eat> <sleep>\n");
 		return (1);
 	}
-	data = init_data(ac, av);
+	data = ft_initdata(ac, av);
 	if (!data)
 		return (1);
 	philos = data->philos;
-	start_threads(data, philos);
+	ft_threads(data, philos);
 	while (1)
 	{
 		pthread_mutex_lock(&data->sim_stop_lock);
 		if (data->sim_stop)
 		{
 			pthread_mutex_unlock(&data->sim_stop_lock);
-			cleanup(data, philos);
+			ft_cleanup(data, philos);
 			return (0);
 		}
 		pthread_mutex_unlock(&data->sim_stop_lock);

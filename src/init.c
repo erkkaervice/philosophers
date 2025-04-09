@@ -6,13 +6,13 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 15:30:10 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/07 15:20:20 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/09 11:50:12 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static int	init_mutexes(t_data *data)
+static int	ft_initmutex(t_data *data)
 {
 	int	i;
 
@@ -40,7 +40,7 @@ static int	init_mutexes(t_data *data)
 	return (0);
 }
 
-static int	init_mutexes_locks(t_data *data)
+static int	ft_initlocks(t_data *data)
 {
 	if (pthread_mutex_init(&data->write_lock, NULL) != 0)
 	{
@@ -63,7 +63,7 @@ static int	init_mutexes_locks(t_data *data)
 	return (0);
 }
 
-int	init_philos(t_data *data, t_philo *philos)
+int	ft_initphilos(t_data *data, t_philo *philos)
 {
 	int	i;
 
@@ -74,7 +74,7 @@ int	init_philos(t_data *data, t_philo *philos)
 		pthread_cond_init(&philos[i].done_cond, NULL);
 		philos[i].id = i + 1;
 		philos[i].meals_eaten = 0;
-		philos[i].last_meal = get_time();
+		philos[i].last_meal = ft_time();
 		philos[i].data = data;
 		philos[i].left_fork = &data->forks[i];
 		philos[i].right_fork = &data->forks[(i + 1) % data->num_philos];
@@ -83,7 +83,7 @@ int	init_philos(t_data *data, t_philo *philos)
 	return (0);
 }
 
-static t_data	*init_alloc_data(char **av)
+static t_data	*ft_initmemory(char **av)
 {
 	t_data	*data;
 
@@ -105,16 +105,16 @@ static t_data	*init_alloc_data(char **av)
 	data->time_to_eat = ft_atoi(av[3]);
 	data->time_to_sleep = ft_atoi(av[4]);
 	data->sim_stop = 0;
-	data->start_time = get_time();
+	data->start_time = ft_time();
 	return (data);
 }
 
-t_data	*init_data(int ac, char **av)
+t_data	*ft_initdata(int ac, char **av)
 {
 	t_data	*data;
 
 	(void)ac;
-	data = init_alloc_data(av);
+	data = ft_initmemory(av);
 	if (!data)
 		return (NULL);
 	if (data->time_to_die <= 0 || data->time_to_eat <= 0
@@ -129,8 +129,8 @@ t_data	*init_data(int ac, char **av)
 		free(data);
 		return (NULL);
 	}
-	if (init_mutexes(data) || init_mutexes_locks(data)
-		|| init_philos(data, data->philos))
+	if (ft_initmutex(data) || ft_initlocks(data)
+		|| ft_initphilos(data, data->philos))
 	{
 		free(data);
 		return (NULL);

@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:41 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/09 11:20:08 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/09 11:54:45 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,17 +47,17 @@ typedef struct s_data
 
 typedef pthread_mutex_t	t_fork;
 
-long long	get_time(void);
+long long	ft_time(void);
 void		ft_usleep(long long ms);
-void		print_log(t_data *data, int id, char *msg);
-t_data		*init_data(int ac, char **av);
-void		*routine(void *arg);
-void		start_threads(t_data *data, t_philo *philos);
-void		eat(t_philo *philo);
-void		sleep_think(t_philo *philo);
-int			check_simulation_status(t_data *data, t_philo *philos);
-int			check_sim_stopped(t_philo *philo);
-int			take_forks(t_philo *philo);
-int			check_if_philosopher_died(t_data *data, t_philo *philo);
+void		ft_printlog(t_data *data, int id, char *msg);
+t_data		*ft_initdata(int ac, char **av);
+void		*ft_routine(void *arg);
+void		ft_threads(t_data *data, t_philo *philos);
+void		ft_eat(t_philo *philo);
+void		ft_sleepthink(t_philo *philo);
+int			ft_status(t_data *data, t_philo *philos);
+int			ft_stoplock(t_philo *philo);
+int			ft_forks(t_philo *philo);
+int			ft_reaper(t_data *data, t_philo *philo);
 
 #endif
