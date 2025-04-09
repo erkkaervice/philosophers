@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 15:49:21 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/09 11:13:55 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/09 11:45:46 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,9 +61,7 @@ int	take_forks(t_philo *philo)
 
 void	eat(t_philo *philo)
 {
-	if (check_sim_stopped(philo))
-		return ;
-	if (!take_forks(philo))
+	if (check_sim_stopped(philo) || !take_forks(philo))
 		return ;
 	ft_usleep(philo->data->time_to_eat);
 	pthread_mutex_lock(&philo->data->sim_stop_lock);

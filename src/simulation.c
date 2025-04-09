@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:27 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/09 11:10:49 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/09 11:46:47 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,11 +31,6 @@ void	start_threads(t_data *data, t_philo *philos)
 	i = 0;
 	while (i < data->num_philos)
 	{
-		pthread_mutex_lock(&philos[i].data->sim_stop_lock);
-		while (!philos[i].thread_done)
-			pthread_cond_wait(&philos[i].done_cond,
-				&philos[i].data->sim_stop_lock);
-		pthread_mutex_unlock(&philos[i].data->sim_stop_lock);
 		pthread_join(philos[i].thread, NULL);
 		i++;
 	}
