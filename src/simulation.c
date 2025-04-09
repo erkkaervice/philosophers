@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:27 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/09 11:54:45 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/09 11:56:37 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ void	ft_threads(t_data *data, t_philo *philos)
 	i = 0;
 	while (i < data->num_philos)
 	{
-		if (pthread_create(&philos[i].thread, NULL, ft_routine, &philos[i]) != 0)
+		if (pthread_create(&philos[i].thread, NULL,
+				ft_routine, &philos[i]) != 0)
 			return ;
 		philos[i].thread_done = 0;
 		i++;
