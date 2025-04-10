@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:27 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/09 12:33:06 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/10 12:04:39 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,17 @@ void	ft_threads(t_data *data, t_philo *philos)
 	int			ret;
 
 	if (data->num_philos == 1)
+	{
+		pthread_mutex_lock(philos[0].left_fork);
+		ft_printlog(data, philos[0].id, "has taken a fork");
+		usleep(data->time_to_die * 1000);
+		ft_printlog(data, philos[0].id, "died");
+		pthread_mutex_unlock(philos[0].left_fork);
+		pthread_mutex_lock(&data->sim_stop_lock);
+		data->sim_stop = 1;
+		pthread_mutex_unlock(&data->sim_stop_lock);
 		return ;
+	}
 	i = 0;
 	while (i < data->num_philos)
 	{

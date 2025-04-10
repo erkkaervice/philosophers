@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:49 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/09 12:32:15 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/10 12:04:41 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ void	ft_cleanup(t_data *data, t_philo *philos)
  * philosopher threads, and enters the main loop, which continuously checks 
  * for the simulation's stop condition. Once the condition is met, it cleans 
  * up the resources and exits the program.
+ * 
+ * If there is only one philosopher, the simulation exits early after cleanup.
  *
  * Parameters:
  * - ac: The argument count (should be 5).
@@ -68,7 +70,7 @@ void	ft_cleanup(t_data *data, t_philo *philos)
  *
  * Returns:
  * - 0 if the simulation completes successfully.
- * - 1 if the arguments are incorrect or an error occurs.
+ * - 1 if the arguments are incorrect or an error occurs during initialization.
  */
 int	main(int ac, char **av)
 {
@@ -85,16 +87,16 @@ int	main(int ac, char **av)
 		return (1);
 	philos = data->philos;
 	ft_threads(data, philos);
-	while (1)
+	if (data->num_philos == 1)
+	{
+		ft_cleanup(data, philos);
+		return (0);
+	}
+	while (!data->sim_stop)
 	{
 		pthread_mutex_lock(&data->sim_stop_lock);
-		if (data->sim_stop)
-		{
-			pthread_mutex_unlock(&data->sim_stop_lock);
-			ft_cleanup(data, philos);
-			return (0);
-		}
 		pthread_mutex_unlock(&data->sim_stop_lock);
 	}
+	ft_cleanup(data, philos);
 	return (0);
 }

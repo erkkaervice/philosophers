@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:41 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/09 12:46:07 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/10 12:04:41 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,8 +93,8 @@ typedef pthread_mutex_t	t_fork;
 long long	ft_time(void);
 void		ft_printlog(t_data *data, int id, char *msg);
 t_data		*ft_initdata(int ac, char **av);
-void		*ft_routine(void *arg);
 void		ft_threads(t_data *data, t_philo *philos);
+void		*ft_routine(void *arg);
 int			ft_status(t_data *data, t_philo *philos);
 
 /* --- Philosopher Action Functions ---

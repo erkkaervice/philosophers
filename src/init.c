@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 15:30:10 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/09 13:35:01 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/10 12:04:41 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,12 +169,14 @@ static t_data	*ft_initmemory(char **av)
 /*
  * ft_initdata - Initializes the data structure for the simulation.
  *
- * This function checks the validity of the input parameters and initializes 
- * the main data structure, mutexes, and philosophers. If any initialization 
- * fails, the function frees allocated memory and returns NULL.
+ * This function checks the validity of the input parameters (e.g., positive times) 
+ * and initializes the main data structure, mutexes, and philosophers. If any 
+ * initialization fails, the function frees allocated memory and returns NULL.
+ * The function also checks if the simulation's time parameters are valid (positive 
+ * integers), and if not, an error message is printed and the function returns NULL.
  *
  * Parameters:
- * - ac: The argument count (unused in this function).
+ * - ac: The argument count (unused in this function, passed to `ft_initmemory`).
  * - av: The argument vector containing command-line arguments.
  *
  * Returns:
@@ -189,7 +191,7 @@ t_data	*ft_initdata(int ac, char **av)
 	if (!data)
 		return (NULL);
 	if (data->time_to_die <= 0 || data->time_to_eat <= 0
-		|| data->time_to_sleep <= 0 || data->num_philos == 1)
+		|| data->time_to_sleep <= 0)
 	{
 		ft_printf("If a tree falls in a forest... are you an idiot?\n");
 		free(data);
