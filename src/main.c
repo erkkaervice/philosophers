@@ -6,11 +6,24 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:49 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/10 12:04:41 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/11 13:45:48 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+// Handles the simulation for a single philosopher.
+void	ft_single_philo(t_philo *philo)
+{
+	pthread_mutex_lock(philo->left_fork);
+	ft_printlog(philo->data, philo->id, "has taken a fork");
+	usleep(philo->data->time_to_die * 1000);
+	ft_printlog(philo->data, philo->id, "died");
+	pthread_mutex_unlock(philo->left_fork);
+	pthread_mutex_lock(&philo->data->sim_stop_lock);
+	philo->data->sim_stop = 1;
+	pthread_mutex_unlock(&philo->data->sim_stop_lock);
+}
 
 /*
  * ft_cleanup - Frees memory and destroys mutexes after the simulation ends.
@@ -65,7 +78,7 @@ void	ft_cleanup(t_data *data, t_philo *philos)
  * If there is only one philosopher, the simulation exits early after cleanup.
  *
  * Parameters:
- * - ac: The argument count (should be 5).
+ * - ac: The argument count (should be 5 or 6).
  * - av: The argument values (parameters for simulation).
  *
  * Returns:
@@ -77,9 +90,9 @@ int	main(int ac, char **av)
 	t_data	*data;
 	t_philo	*philos;
 
-	if (ac != 5)
+	if (ac != 5 && ac != 6)
 	{
-		ft_printf("Usage: ./philo <# of philos> <die> <eat> <sleep>\n");
+		ft_printf("Use: ./philo <# philos> <die> <eat> <sleep> [max meals]\n");
 		return (1);
 	}
 	data = ft_initdata(ac, av);

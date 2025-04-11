@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:27 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/10 12:04:39 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/11 13:48:34 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,19 +32,11 @@
 void	ft_threads(t_data *data, t_philo *philos)
 {
 	int			i;
-	long long	start_time;
 	int			ret;
 
 	if (data->num_philos == 1)
 	{
-		pthread_mutex_lock(philos[0].left_fork);
-		ft_printlog(data, philos[0].id, "has taken a fork");
-		usleep(data->time_to_die * 1000);
-		ft_printlog(data, philos[0].id, "died");
-		pthread_mutex_unlock(philos[0].left_fork);
-		pthread_mutex_lock(&data->sim_stop_lock);
-		data->sim_stop = 1;
-		pthread_mutex_unlock(&data->sim_stop_lock);
+		ft_single_philo(&philos[0]);
 		return ;
 	}
 	i = 0;
@@ -56,12 +48,14 @@ void	ft_threads(t_data *data, t_philo *philos)
 		philos[i].thread_done = 0;
 		i++;
 	}
-	start_time = ft_time();
-	while (!ft_status(data, philos) && ft_time() - start_time < 100)
+	while (!ft_status(data, philos))
 		usleep(100);
 	i = 0;
 	while (i < data->num_philos)
-		pthread_join(philos[i++].thread, NULL);
+	{
+		pthread_join(philos[i].thread, NULL);
+		i++;
+	}
 }
 
 /*
@@ -88,6 +82,9 @@ void	*ft_routine(void *arg)
 		if (ft_stoplock(philo))
 			break ;
 		ft_eat(philo);
+		if (philo->data->must_eat
+			&& philo->meals_eaten >= philo->data->must_eat)
+			break ;
 		ft_sleepthink(philo);
 	}
 	pthread_mutex_lock(&philo->data->sim_stop_lock);
@@ -158,6 +155,8 @@ int	ft_status(t_data *data, t_philo *philos)
 	{
 		if (ft_reaper(data, &philos[i]))
 			return (1);
+		if (data->must_eat > 0 && philos[i].meals_eaten < data->must_eat)
+			return (0);
 		i++;
 	}
 	return (0);

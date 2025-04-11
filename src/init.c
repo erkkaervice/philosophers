@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 15:30:10 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/10 12:04:41 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/11 13:47:46 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,14 @@
 /*
  * ft_initforks - Initializes the mutexes for the forks.
  *
- * This function allocates memory for the forks mutexes and initializes each
- * mutex. If memory allocation or mutex initialization fails, the function 
- * returns 1, cleans up any allocated memory, and prints an error message.
- * If everything succeeds, it returns 0.
+ * This function allocates memory for the forks mutexes and initializes 
+ * each mutex. If memory allocation or mutex initialization fails, 
+ * the function returns 1, cleans up any allocated memory, and prints 
+ * an error message. If everything succeeds, it returns 0.
  *
  * Parameters:
- * - data: The data structure containing the number of philosophers and 
- *         the array of forks mutexes.
+ * - data: The data structure containing the number of philosophers 
+ *         and the array of forks mutexes.
  *
  * Returns:
  * - 0 on success, 1 on failure.
@@ -59,8 +59,8 @@ static int	ft_initforks(t_data *data)
  * ft_initlocks - Initializes the necessary locks for synchronization.
  *
  * This function initializes the mutexes used for synchronizing writes, 
- * stopping the simulation, and tracking the last meal time. If any mutex 
- * initialization fails, the function returns 1, cleans up previously 
+ * stopping the simulation, and tracking the last meal time. If any 
+ * mutex initialization fails, the function returns 1, cleans up previously 
  * initialized mutexes, and prints an error message.
  *
  * Parameters:
@@ -95,9 +95,9 @@ static int	ft_initlocks(t_data *data)
 /*
  * ft_initphilos - Initializes the philosophers with default values.
  *
- * This function sets up each philosopher with an ID, meal count, and initial 
- * last meal time. It also sets up the mutexes for synchronization and assigns 
- * the left and right forks for each philosopher.
+ * This function sets up each philosopher with an ID, meal count, and 
+ * initial last meal time. It also sets up the mutexes for synchronization 
+ * and assigns the left and right forks for each philosopher.
  *
  * Parameters:
  * - data: The data structure containing information about the simulation.
@@ -163,17 +163,19 @@ static t_data	*ft_initmemory(char **av)
 	data->time_to_sleep = ft_atoi(av[4]);
 	data->sim_stop = 0;
 	data->start_time = ft_time();
+	data->must_eat = -1;
 	return (data);
 }
 
 /*
  * ft_initdata - Initializes the data structure for the simulation.
  *
- * This function checks the validity of the input parameters (e.g., positive times) 
- * and initializes the main data structure, mutexes, and philosophers. If any 
- * initialization fails, the function frees allocated memory and returns NULL.
- * The function also checks if the simulation's time parameters are valid (positive 
- * integers), and if not, an error message is printed and the function returns NULL.
+ * This function checks the validity of the input parameters (e.g., positive 
+ * times) and initializes the main data structure, mutexes, and philosophers. 
+ * If any initialization fails, the function frees allocated memory and 
+ * returns NULL. The function also checks if the simulation's time parameters 
+ * are valid (positive integers), and if not, an error message is printed 
+ * and the function returns NULL.
  *
  * Parameters:
  * - ac: The argument count (unused in this function, passed to `ft_initmemory`).
@@ -197,6 +199,10 @@ t_data	*ft_initdata(int ac, char **av)
 		free(data);
 		return (NULL);
 	}
+	if (ac == 6)
+		data->must_eat = ft_atoi(av[5]);
+	else
+		data->must_eat = -1;
 	if (ft_initforks(data) || ft_initlocks(data)
 		|| ft_initphilos(data, data->philos))
 	{
