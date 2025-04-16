@@ -6,13 +6,12 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:49 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/11 13:45:48 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/16 16:50:17 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-// Handles the simulation for a single philosopher.
 void	ft_single_philo(t_philo *philo)
 {
 	pthread_mutex_lock(philo->left_fork);
@@ -25,18 +24,21 @@ void	ft_single_philo(t_philo *philo)
 	pthread_mutex_unlock(&philo->data->sim_stop_lock);
 }
 
-/*
- * ft_cleanup - Frees memory and destroys mutexes after the simulation ends.
- *
- * This function ensures that all dynamically allocated memory is freed, and 
- * all mutexes used throughout the simulation are properly destroyed. This 
- * includes cleaning up philosopher threads, mutexes used for forks, and 
- * shared locks used for simulation control.
- *
- * Parameters:
- * - data: A pointer to the data structure containing simulation details.
- * - philos: A pointer to the array of philosopher structures.
- */
+int all_philosophers_done_eating(t_data *data, t_philo *philos)
+{
+	int i;
+
+	i = 0;
+	while (i < data->num_philos)
+	{
+		if (philos[i].meals_eaten < data->must_eat)  // Check if the philosopher hasn't eaten enough
+			return (0);  // Not all philosophers are done
+		i++;
+	}
+	return (1);  // All philosophers have eaten enough
+}
+
+
 void	ft_cleanup(t_data *data, t_philo *philos)
 {
 	int				i;
@@ -52,7 +54,7 @@ void	ft_cleanup(t_data *data, t_philo *philos)
 				lock = &philos[i].data->sim_stop_lock;
 				pthread_mutex_lock(lock);
 				while (!philos[i].thread_done)
-					pthread_cond_wait(&philos[i].done_cond, lock);
+					pthread_cond_wait(&philos[i].done_cond, lock);  // Wait for thread to finish
 				pthread_mutex_unlock(lock);
 				pthread_mutex_destroy(&data->forks[i]);
 			}
@@ -66,25 +68,8 @@ void	ft_cleanup(t_data *data, t_philo *philos)
 	free(data);
 }
 
-/*
- * main - The entry point of the simulation. Initializes data and philosophers,
- *        starts threads, and manages the simulation loop.
- *
- * The function handles initialization of the simulation data, sets up 
- * philosopher threads, and enters the main loop, which continuously checks 
- * for the simulation's stop condition. Once the condition is met, it cleans 
- * up the resources and exits the program.
- * 
- * If there is only one philosopher, the simulation exits early after cleanup.
- *
- * Parameters:
- * - ac: The argument count (should be 5 or 6).
- * - av: The argument values (parameters for simulation).
- *
- * Returns:
- * - 0 if the simulation completes successfully.
- * - 1 if the arguments are incorrect or an error occurs during initialization.
- */
+
+
 int	main(int ac, char **av)
 {
 	t_data	*data;
@@ -105,11 +90,22 @@ int	main(int ac, char **av)
 		ft_cleanup(data, philos);
 		return (0);
 	}
-	while (!data->sim_stop)
+
+	// Main simulation loop
+	while (!data->sim_stop)  // Stop when simulation is over
 	{
 		pthread_mutex_lock(&data->sim_stop_lock);
+		// You can add any additional checks here, like checking if all philosophers are done eating
+		if (data->must_eat > 0 && all_philosophers_done_eating(data, philos))
+		{
+			data->sim_stop = 1;  // Stop the simulation when all philosophers are done eating
+		}
 		pthread_mutex_unlock(&data->sim_stop_lock);
+
+		usleep(100);  // Prevent tight looping
 	}
+
+	// Cleanup after simulation finishes
 	ft_cleanup(data, philos);
 	return (0);
 }

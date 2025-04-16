@@ -6,27 +6,13 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 15:30:10 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/11 13:47:46 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/16 16:00:00 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-/*
- * ft_initforks - Initializes the mutexes for the forks.
- *
- * This function allocates memory for the forks mutexes and initializes 
- * each mutex. If memory allocation or mutex initialization fails, 
- * the function returns 1, cleans up any allocated memory, and prints 
- * an error message. If everything succeeds, it returns 0.
- *
- * Parameters:
- * - data: The data structure containing the number of philosophers 
- *         and the array of forks mutexes.
- *
- * Returns:
- * - 0 on success, 1 on failure.
- */
+
 static int	ft_initforks(t_data *data)
 {
 	int	i;
@@ -55,20 +41,7 @@ static int	ft_initforks(t_data *data)
 	return (0);
 }
 
-/*
- * ft_initlocks - Initializes the necessary locks for synchronization.
- *
- * This function initializes the mutexes used for synchronizing writes, 
- * stopping the simulation, and tracking the last meal time. If any 
- * mutex initialization fails, the function returns 1, cleans up previously 
- * initialized mutexes, and prints an error message.
- *
- * Parameters:
- * - data: The data structure containing the mutexes for synchronization.
- *
- * Returns:
- * - 0 on success, 1 on failure.
- */
+
 static int	ft_initlocks(t_data *data)
 {
 	if (pthread_mutex_init(&data->write_lock, NULL) != 0)
@@ -92,20 +65,7 @@ static int	ft_initlocks(t_data *data)
 	return (0);
 }
 
-/*
- * ft_initphilos - Initializes the philosophers with default values.
- *
- * This function sets up each philosopher with an ID, meal count, and 
- * initial last meal time. It also sets up the mutexes for synchronization 
- * and assigns the left and right forks for each philosopher.
- *
- * Parameters:
- * - data: The data structure containing information about the simulation.
- * - philos: The array of philosophers to initialize.
- *
- * Returns:
- * - 0 on success.
- */
+
 int	ft_initphilos(t_data *data, t_philo *philos)
 {
 	int	i;
@@ -126,20 +86,9 @@ int	ft_initphilos(t_data *data, t_philo *philos)
 	return (0);
 }
 
-/*
- * ft_initmemory - Allocates memory for the data structure.
- *
- * This function allocates memory for the main simulation data structure 
- * and the philosophers array. It initializes the parameters using values 
- * passed through `av`. If memory allocation fails, an error message is printed, 
- * and the function returns NULL.
- *
- * Parameters:
- * - av: The argument vector containing command-line arguments.
- *
- * Returns:
- * - A pointer to the initialized `t_data` structure, or NULL on failure.
- */
+
+
+
 static t_data	*ft_initmemory(char **av)
 {
 	t_data	*data;
@@ -167,28 +116,11 @@ static t_data	*ft_initmemory(char **av)
 	return (data);
 }
 
-/*
- * ft_initdata - Initializes the data structure for the simulation.
- *
- * This function checks the validity of the input parameters (e.g., positive 
- * times) and initializes the main data structure, mutexes, and philosophers. 
- * If any initialization fails, the function frees allocated memory and 
- * returns NULL. The function also checks if the simulation's time parameters 
- * are valid (positive integers), and if not, an error message is printed 
- * and the function returns NULL.
- *
- * Parameters:
- * - ac: The argument count (unused in this function, passed to `ft_initmemory`).
- * - av: The argument vector containing command-line arguments.
- *
- * Returns:
- * - A pointer to the initialized `t_data` structure, or NULL on failure.
- */
+
 t_data	*ft_initdata(int ac, char **av)
 {
 	t_data	*data;
 
-	(void)ac;
 	data = ft_initmemory(av);
 	if (!data)
 		return (NULL);
@@ -201,8 +133,6 @@ t_data	*ft_initdata(int ac, char **av)
 	}
 	if (ac == 6)
 		data->must_eat = ft_atoi(av[5]);
-	else
-		data->must_eat = -1;
 	if (ft_initforks(data) || ft_initlocks(data)
 		|| ft_initphilos(data, data->philos))
 	{
