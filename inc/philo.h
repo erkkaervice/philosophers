@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:41 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/17 17:48:28 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/17 17:54:27 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,11 +94,11 @@ t_data		*ft_initdata(int ac, char **av);
   * Functions for creating and managing philosopher threads, and handling
   * their routines.
   */
- void		ft_threads(t_data *data, t_philo *philos);
- void		*ft_routine(void *arg);
- void		ft_wait(t_data *data, t_philo *philos);
- void		ft_solo(t_philo *philo);
- 
+void		ft_threads(t_data *data, t_philo *philos);
+void		*ft_routine(void *arg);
+void		ft_wait(t_data *data, t_philo *philos);
+void		ft_solo(t_philo *philo);
+
 /* --- Philosopher Action Functions ---
   * Functions that simulate the philosopher's actions such as eating,
   * sleeping, and interacting with forks.
