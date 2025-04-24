@@ -6,11 +6,69 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 15:49:21 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/24 13:30:51 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/24 16:08:04 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+/*
+ * ft_forks - Attempts to acquire both forks for a philosopher to eat.
+ *
+ * This function locks the left and right forks for the philosopher, ensuring 
+ * that no other philosopher can access the same forks at the same time. 
+ * If the simulation is stopped during the process, it unlocks any acquired 
+ * forks and returns 0 to indicate that the philosopher could not proceed.
+ *
+ * Parameters:
+ * - philo: A pointer to the philosopher's data structure, containing 
+ *          fork information.
+ *
+ * Returns:
+ * - 1 if the philosopher successfully took both forks and can eat.
+ * - 0 if the philosopher could not take both forks and cannot eat.
+ */
+int	ft_forks(t_philo *philo)
+{
+	if (philo->left_fork == philo->right_fork)
+	{
+		pthread_mutex_lock(philo->left_fork);
+		pthread_mutex_lock(&philo->data->sim_stop_lock);
+		if (philo->data->sim_stop)
+		{
+			pthread_mutex_unlock(&philo->data->sim_stop_lock);
+			pthread_mutex_unlock(philo->left_fork);
+			return (0);
+		}
+		pthread_mutex_unlock(&philo->data->sim_stop_lock);
+		ft_printlog(philo, "has taken a fork");
+		return (0);
+	}
+	if (philo->left_fork < philo->right_fork)
+	{
+		pthread_mutex_lock(philo->left_fork);
+		pthread_mutex_lock(philo->right_fork);
+	}
+	else
+	{
+		pthread_mutex_lock(philo->right_fork);
+		pthread_mutex_lock(philo->left_fork);
+	}
+	pthread_mutex_lock(&philo->data->sim_stop_lock);
+	if (philo->data->sim_stop)
+	{
+		pthread_mutex_unlock(&philo->data->sim_stop_lock);
+		pthread_mutex_unlock(philo->left_fork);
+		pthread_mutex_unlock(philo->right_fork);
+		return (0);
+	}
+	philo->last_meal = ft_time();
+	pthread_mutex_unlock(&philo->data->sim_stop_lock);
+	ft_printlog(philo, "has taken a fork");
+	ft_printlog(philo, "has taken a fork");
+	ft_printlog(philo, "is eating");
+	return (1);
+}
 
 /*
  * ft_eat - Simulates the philosopher eating.
@@ -27,32 +85,34 @@
  */
 void	ft_eat(t_philo *philo)
 {
-	long long	start_time;
+	long long		start_time;
+	pthread_mutex_t	*first;
+	pthread_mutex_t	*second;
 
 	if (ft_stoplock(philo) || !ft_forks(philo))
 		return ;
+	pthread_mutex_lock(&philo->data->sim_stop_lock);
+	philo->start_eating = ft_time();
+	pthread_mutex_unlock(&philo->data->sim_stop_lock);
 	start_time = ft_time();
 	while (ft_time() - start_time < philo->data->time_to_eat)
-		usleep(50);
+		usleep(100);
 	pthread_mutex_lock(&philo->data->sim_stop_lock);
 	if (!philo->data->sim_stop && philo->meals_eaten < philo->data->must_eat)
-	{
-		pthread_mutex_lock(&philo->data->last_meal_lock);
-		philo->last_meal = ft_time();
-		pthread_mutex_unlock(&philo->data->last_meal_lock);
 		philo->meals_eaten++;
-	}
 	pthread_mutex_unlock(&philo->data->sim_stop_lock);
-	if (philo->left_fork < philo->right_fork)
+	if (philo->id % 2 == 0)
 	{
-		pthread_mutex_unlock(philo->right_fork);
-		pthread_mutex_unlock(philo->left_fork);
+		first = philo->right_fork;
+		second = philo->left_fork;
 	}
 	else
 	{
-		pthread_mutex_unlock(philo->left_fork);
-		pthread_mutex_unlock(philo->right_fork);
+		first = philo->left_fork;
+		second = philo->right_fork;
 	}
+	pthread_mutex_unlock(second);
+	pthread_mutex_unlock(first);
 }
 
 /*
@@ -85,57 +145,6 @@ void	ft_sleepthink(t_philo *philo)
 	if (ft_stoplock(philo))
 		return ;
 	ft_printlog(philo, "is thinking");
-}
-
-/*
- * ft_forks - Attempts to acquire both forks for a philosopher to eat.
- *
- * This function locks the left and right forks for the philosopher, ensuring 
- * that no other philosopher can access the same forks at the same time. 
- * If the simulation is stopped during the process, it unlocks any acquired 
- * forks and returns 0 to indicate that the philosopher could not proceed.
- *
- * Parameters:
- * - philo: A pointer to the philosopher's data structure, containing 
- *          fork information.
- *
- * Returns:
- * - 1 if the philosopher successfully took both forks and can eat.
- * - 0 if the philosopher could not take both forks and cannot eat.
- */
-int	ft_forks(t_philo *philo)
-{
-	pthread_mutex_t	*first;
-	pthread_mutex_t	*second;
-
-	if (philo->left_fork < philo->right_fork)
-	{
-		first = philo->left_fork;
-		second = philo->right_fork;
-	}
-	else
-	{
-		first = philo->right_fork;
-		second = philo->left_fork;
-	}
-	pthread_mutex_lock(first);
-	pthread_mutex_lock(second);
-	pthread_mutex_lock(&philo->data->sim_stop_lock);
-	if (philo->data->sim_stop)
-	{
-		pthread_mutex_unlock(&philo->data->sim_stop_lock);
-		pthread_mutex_unlock(second);
-		pthread_mutex_unlock(first);
-		return (0);
-	}
-	pthread_mutex_unlock(&philo->data->sim_stop_lock);
-	ft_printlog(philo, "has taken a fork");
-	ft_printlog(philo, "has taken a fork");
-	ft_printlog(philo, "is eating");
-	pthread_mutex_lock(&philo->data->last_meal_lock);
-	philo->last_meal = ft_time();
-	pthread_mutex_unlock(&philo->data->last_meal_lock);
-	return (1);
 }
 
 /*

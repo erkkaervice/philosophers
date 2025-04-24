@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:41 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/23 14:33:19 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/24 15:55:45 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 /* Structure representing a philosopher.
  * - last_meal: Timestamp of the last meal. Initialized to the current time
  *   upon philosopher creation, but updates during eating.
- * - id: Unique identifier for each philosopher.
+ * - id: Number identifier for each philosopher.
  * - meals_eaten: The number of meals the philosopher has eaten.
  * - thread_done: Flag indicating whether the philosopher has completed
  *   necessary actions, such as eating or dying, and can finish its thread.
@@ -43,6 +43,7 @@
 typedef struct s_philo
 {
 	long long		last_meal;
+	long long		start_eating;
 	int				id;
 	int				meals_eaten;
 	int				thread_done;
@@ -56,25 +57,17 @@ typedef struct s_philo
 /* Structure representing the simulation data.
  * - start_time: The timestamp of when the simulation begins.
  * - num_philos: The number of philosophers in the simulation.
- * - time_to_die: The time (in milliseconds) before a philosopher dies from
- *   starvation.
- * - time_to_eat: The time (in milliseconds) a philosopher spends eating.
- * - time_to_sleep: The time (in milliseconds) a philosopher sleeps after
- *   eating.
- * - sim_stop: Flag to indicate if the simulation should stop. Set when a
- *   philosopher dies or a condition is met to end the simulation.
+ * - time_to_die: The time before a philosopher dies from starvation.
+ * - time_to_eat: The time a philosopher spends eating.
+ * - time_to_sleep: The time a philosopher sleeps after eating.
+ * - sim_stop: Flag to indicate if the simulation should stop.
  * - must_eat: Global condition that dictates how many times each philosopher
  *   must eat before the simulation ends. It is checked by the philosophers
  *   as part of the termination condition.
- * - write_lock: Mutex used to synchronize logging operations, ensuring
- *   that output is not corrupted by concurrent threads.
- * - sim_stop_lock: Mutex used to safely check and modify the sim_stop flag,
- *   protecting access to the flag that determines if the simulation should
- *   continue or stop.
- * - last_meal_lock: Mutex used to protect access to philosophers' last meal
- *   timestamps to ensure thread-safe updates and comparisons.
- * - forks: Array of mutexes representing the forks used by philosophers
- *   (shared resources).
+ * - write_lock: Mutex used to synchronize logging operations.
+ * - sim_stop_lock: Mutex used to safely check and modify the sim_stop flag.
+ * - last_meal_lock: Mutex used to protect access to philosophers' last meal.
+ * - forks: Array of mutexes representing the forks used by philosophers.
  * - philos: Array of philosopher structures. Each philosopher contains
  *   their own state and references to the shared forks, ensuring their
  *   individual actions are synchronized with the global simulation.
@@ -96,49 +89,28 @@ typedef struct s_data
 }	t_data;
 
 /* --- Core Simulation Functions ---
- * Functions related to simulation time, initialization, and managing
- * philosopher actions.
+ * Functions for managing timestamps, managing actions and data initialization.
  */
 long long	ft_time(void);
 void		ft_printlog(t_philo *philo, char *msg);
 t_data		*ft_initdata(int ac, char **av);
 
-/* --- Philosopher Thread and Routine Management ---
- * Functions for creating and managing philosopher threads, and handling
- * their routines.
- */
-void		ft_threads(t_data *data, t_philo *philos);
-void		*ft_routine(void *arg);
-void		ft_wait(t_data *data, t_philo *philos);
-void		ft_solo(t_philo *philo);
-
 /* --- Philosopher Action Functions ---
- * Functions that simulate the philosopher's actions such as eating,
- * sleeping, and interacting with forks.
+ * Functions that simulate the philosopher's actions such as eating and sleeping.
  */
 void		ft_eat(t_philo *philo);
 void		ft_sleepthink(t_philo *philo);
-int			ft_forks(t_philo *philo);
 
 /* --- Simulation Control and Monitoring ---
- * Functions for controlling the simulation's status, stopping the
- * simulation, and checking the philosophers' status.
+ * Functions for checking the philosophers' status and stopping the simulation.
  */
-int			ft_stoplock(t_philo *philo);
 int			ft_status(t_data *data, t_philo *philos);
-int			ft_check_meals(t_data *data, t_philo *philos);
+int			ft_stoplock(t_philo *philo);
+int			ft_maxmeal(t_data *data, t_philo *philos);
 
-/* --- Cleanup Functions ---
- * Functions for cleaning up the simulation after it ends, including
- * freeing memory and destroying mutexes.
+/* --- Cleanup Function ---
+ * Function for cleaning up the simulation after it ends.
  */
 void		ft_cleanup(t_data *data, t_philo *philos);
-int			ft_maxmeal(t_data *data, t_philo *philos);
-void		ft_single_philo(t_philo *philo);
-
-/* --- Additional Utility Functions ---
- * Miscellaneous helper functions used throughout the simulation.
- */
-int			ft_reaper(t_data *data, t_philo *philo);
 
 #endif

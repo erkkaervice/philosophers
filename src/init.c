@@ -6,45 +6,34 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 15:30:10 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/24 12:19:20 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/24 15:56:56 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 /*
- * ft_initforks - Initializes fork mutexes for each philosopher.
+ * Initializes fork mutexes for each philosopher.
  *
- * Allocates memory for fork mutexes and initializes each one. If allocation
- * or initialization fails, already-initialized mutexes are destroyed, memory
- * is freed, and the function returns 1.
- *
- * Parameters:
- * - data: Pointer to the data struct holding philosopher count and fork array.
- *
- * Returns:
- * - 0 on success, 1 on failure.
+ * Allocates memory for fork mutexes and initializes each one. If initialization
+ * fails, already-initialized mutexes are destroyed, and memory is freed.
  */
 static int	ft_initforks(t_data *data)
 {
 	int	i;
 
-	data->forks = malloc(sizeof(pthread_mutex_t) * data->num_philos);
+	data->forks = malloc(sizeof(pthread_mutex_t) * (data->num_philos + 2));
 	if (!data->forks)
-	{
-		ft_printf("What forks?\n");
-		return (1);
-	}
+		return (ft_printf("What forks?\n"), 1);
 	i = 0;
-	while (i < data->num_philos)
+	while (i < data->num_philos + 2)
 	{
 		if (pthread_mutex_init(&data->forks[i], NULL) != 0)
 		{
 			while (i-- > 0)
 				pthread_mutex_destroy(&data->forks[i]);
 			free(data->forks);
-			ft_printf("Failed to initialize mutex for fork %d\n", i);
-			return (1);
+			return (ft_printf("Failed mutex for fork %d\n", i), 1);
 		}
 		i++;
 	}
@@ -52,53 +41,33 @@ static int	ft_initforks(t_data *data)
 }
 
 /*
- * ft_initlocks - Initializes simulation synchronization locks.
+ * Initializes simulation synchronization locks.
  *
  * Initializes write_lock, sim_stop_lock, and last_meal_lock. If any
- * initialization fails, previously-initialized mutexes are destroyed and
- * the function returns 1.
- *
- * Parameters:
- * - data: Pointer to the data struct containing the mutexes.
- *
- * Returns:
- * - 0 on success, 1 on failure.
+ * initialization fails, previously-initialized mutexes are destroyed.
  */
 static int	ft_initlocks(t_data *data)
 {
 	if (pthread_mutex_init(&data->write_lock, NULL) != 0)
-	{
-		ft_printf("Failed to initialize write_lock mutex\n");
-		return (1);
-	}
+		return (ft_printf("Failed mutex for write_lock\n"), 1);
 	if (pthread_mutex_init(&data->sim_stop_lock, NULL) != 0)
 	{
-		ft_printf("Failed to initialize sim_stop_lock mutex\n");
 		pthread_mutex_destroy(&data->write_lock);
-		return (1);
+		return (ft_printf("Failed mutex for sim_stop_lock\n"), 1);
 	}
 	if (pthread_mutex_init(&data->last_meal_lock, NULL) != 0)
 	{
-		ft_printf("Failed to initialize last_meal_lock mutex\n");
 		pthread_mutex_destroy(&data->write_lock);
 		pthread_mutex_destroy(&data->sim_stop_lock);
-		return (1);
+		return (ft_printf("Failed mutex for last_meal_lock\n"), 1);
 	}
 	return (0);
 }
 
 /*
- * ft_initphilos - Sets default values for each philosopher.
+ * Sets default values for each philosopher.
  *
- * Initializes philosopher fields: ID, meal count, last_meal time, and
- * condition variable. Also assigns fork pointers and back-reference to data.
- *
- * Parameters:
- * - data: Pointer to shared simulation data.
- * - philos: Array of philosopher structs to initialize.
- *
- * Returns:
- * - 0 on success, 1 on failure.
+ * Initializes philo fields, back-reference to data and assigns fork pointers.
  */
 static int	ft_initphilos(t_data *data, t_philo *philos)
 {
@@ -108,34 +77,25 @@ static int	ft_initphilos(t_data *data, t_philo *philos)
 	while (i < data->num_philos)
 	{
 		philos[i].last_meal = ft_time();
+		philos[i].start_eating = 0;
 		philos[i].id = i + 1;
 		philos[i].meals_eaten = 0;
 		philos[i].thread_done = 0;
 		if (pthread_cond_init(&philos[i].done_cond, NULL) != 0)
-		{
-			ft_printf("Philo %d is in bad condition.\n", i + 1);
-			return (1);
-		}
+			return (ft_printf("Philo %d is in no condition.\n", i + 1), 1);
 		philos[i].data = data;
-		philos[i].left_fork = &data->forks[i];
-		philos[i].right_fork = &data->forks[(i + 1) % data->num_philos];
+		philos[i].left_fork = &data->forks[i + 1];
+		philos[i].right_fork = &data->forks[(i + 2) % data->num_philos];
 		i++;
 	}
 	return (0);
 }
 
 /*
- * ft_initmemory - Allocates and fills core simulation data.
+ * Allocates and fills core simulation data.
  *
  * Allocates memory for the data struct and philosopher array. Assigns
- * arguments to simulation parameters. On failure, prints error and returns
- * NULL.
- *
- * Parameters:
- * - av: Command-line argument array.
- *
- * Returns:
- * - Pointer to initialized data struct, or NULL on failure.
+ * arguments to simulation parameters. On failure, prints error.
  */
 static t_data	*ft_initmemory(char **av)
 {
@@ -143,10 +103,7 @@ static t_data	*ft_initmemory(char **av)
 
 	data = malloc(sizeof(t_data));
 	if (!data)
-	{
-		ft_printf("What data?\n");
-		return (NULL);
-	}
+		return (ft_printf("What data?\n"), NULL);
 	data->start_time = ft_time();
 	data->num_philos = ft_atoi(av[1]);
 	data->time_to_die = ft_atoi(av[2]);
@@ -157,26 +114,18 @@ static t_data	*ft_initmemory(char **av)
 	data->philos = malloc(sizeof(t_philo) * data->num_philos);
 	if (!data->philos)
 	{
-		ft_printf("What philosophers?\n");
 		free(data);
-		return (NULL);
+		return (ft_printf("What philosophers?\n"), NULL);
 	}
 	return (data);
 }
 
 /*
- * ft_initdata - Full initialization entry point for simulation.
+ * Full initialization entry point for simulation.
  *
  * Calls ft_initmemory and validates time arguments. If any required argument
  * is non-positive, frees memory and returns NULL. Then initializes mutexes,
  * forks, and philosophers. On any failure, frees all memory and returns NULL.
- *
- * Parameters:
- * - ac: Argument count.
- * - av: Argument vector.
- *
- * Returns:
- * - Pointer to fully initialized data struct, or NULL on failure.
  */
 t_data	*ft_initdata(int ac, char **av)
 {
@@ -188,10 +137,9 @@ t_data	*ft_initdata(int ac, char **av)
 	if (data->time_to_die <= 0 || data->time_to_eat <= 0
 		|| data->time_to_sleep <= 0)
 	{
-		ft_printf("No tree falls in a forest... are you an idiot?\n");
 		free(data->philos);
 		free(data);
-		return (NULL);
+		return (ft_printf("Brain much with the values?\n"), NULL);
 	}
 	if (ac == 6)
 		data->must_eat = ft_atoi(av[5]);

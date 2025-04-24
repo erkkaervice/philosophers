@@ -6,7 +6,7 @@
 #    By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/02 15:36:34 by eala-lah          #+#    #+#              #
-#    Updated: 2025/04/17 17:47:14 by eala-lah         ###   ########.fr        #
+#    Updated: 2025/04/24 14:56:08 by eala-lah         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,9 +18,9 @@ LIBFT       = $(LIBFT_DIR)/libft.a
 SRC_DIR     = src/
 SRC         = \
 	actions.c \
+	exit.c \
 	init.c \
 	main.c \
-	threads.c
 
 OBJ_DIR     = obj/
 OBJS        = $(addprefix $(OBJ_DIR), $(SRC:.c=.o))
