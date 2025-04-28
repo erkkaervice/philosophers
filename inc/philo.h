@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:41 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/24 15:55:45 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/28 14:16:46 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@
 typedef struct s_philo
 {
 	long long		last_meal;
-	long long		start_eating;
 	int				id;
 	int				meals_eaten;
 	int				thread_done;

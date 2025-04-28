@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:27 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/24 16:08:02 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/28 14:39:14 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,26 +57,29 @@ int	ft_stoplock(t_philo *philo)
 int	ft_reaper(t_data *data, t_philo *philo)
 {
 	long long	current_time;
-	long long	start_eating;
+	long long	last_meal;
 
 	if (ft_stoplock(philo))
 		return (1);
 	pthread_mutex_lock(&data->last_meal_lock);
-	start_eating = philo->start_eating;
+	last_meal = philo->last_meal;
 	pthread_mutex_unlock(&data->last_meal_lock);
 	current_time = ft_time();
-	if (current_time - start_eating >= data->time_to_die)
+	if (current_time - last_meal < data->time_to_die)
+		return (0);
+	pthread_mutex_lock(&data->sim_stop_lock);
+	if (data->sim_stop)
+		pthread_mutex_unlock(&data->sim_stop_lock);
+	else
 	{
-		pthread_mutex_lock(&data->sim_stop_lock);
 		data->sim_stop = 1;
 		pthread_mutex_unlock(&data->sim_stop_lock);
 		pthread_mutex_lock(&data->write_lock);
-		ft_printf("%d %d has died\n",
+		ft_printf("%d %d died\n",
 			(int)(current_time - data->start_time), philo->id);
 		pthread_mutex_unlock(&data->write_lock);
-		return (1);
 	}
-	return (0);
+	return (1);
 }
 
 /*
@@ -169,30 +172,28 @@ int	ft_status(t_data *data, t_philo *philos)
  * - data: A pointer to the data structure containing simulation details.
  * - philos: A pointer to the array of philosopher structures.
  */
+
 void	ft_cleanup(t_data *data, t_philo *philos)
 {
-	int				i;
-	pthread_mutex_t	*lock;
+	int	i;
 
-	if (philos)
+	if (philos && data->num_philos > 1)
 	{
 		i = 0;
 		while (i < data->num_philos)
 		{
-			if (data->num_philos > 1)
-			{
-				lock = &philos[i].data->sim_stop_lock;
-				pthread_mutex_lock(lock);
-				while (!philos[i].thread_done)
-					pthread_cond_wait(&philos[i].done_cond, lock);
-				pthread_mutex_unlock(lock);
-				pthread_mutex_destroy(&data->forks[i]);
-				pthread_cond_destroy(&philos[i].done_cond);
-			}
+			pthread_mutex_lock(&philos[i].data->sim_stop_lock);
+			while (!philos[i].thread_done)
+				pthread_cond_wait(&philos[i].done_cond,
+					&philos[i].data->sim_stop_lock);
+			pthread_mutex_unlock(&philos[i].data->sim_stop_lock);
+			pthread_mutex_destroy(&data->forks[i]);
+			pthread_cond_destroy(&philos[i].done_cond);
 			i++;
 		}
-		free(philos);
 	}
+	if (philos)
+		free(philos);
 	pthread_mutex_destroy(&data->write_lock);
 	pthread_mutex_destroy(&data->sim_stop_lock);
 	pthread_mutex_destroy(&data->last_meal_lock);

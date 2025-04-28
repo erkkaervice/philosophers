@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 15:30:10 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/24 15:56:56 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/28 14:16:47 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,6 @@ static int	ft_initphilos(t_data *data, t_philo *philos)
 	while (i < data->num_philos)
 	{
 		philos[i].last_meal = ft_time();
-		philos[i].start_eating = 0;
 		philos[i].id = i + 1;
 		philos[i].meals_eaten = 0;
 		philos[i].thread_done = 0;
