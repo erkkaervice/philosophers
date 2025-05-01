@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 15:30:10 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/28 14:16:47 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/04/29 14:59:47 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,13 +133,6 @@ t_data	*ft_initdata(int ac, char **av)
 	data = ft_initmemory(av);
 	if (!data)
 		return (NULL);
-	if (data->time_to_die <= 0 || data->time_to_eat <= 0
-		|| data->time_to_sleep <= 0)
-	{
-		free(data->philos);
-		free(data);
-		return (ft_printf("Brain much with the values?\n"), NULL);
-	}
 	if (ac == 6)
 		data->must_eat = ft_atoi(av[5]);
 	if (ft_initforks(data)

@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:49 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/28 14:40:52 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/01 17:30:00 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,8 @@ static void	ft_wait(t_data *data, t_philo *philos)
 
 	while (!ft_stoplock(&philos[0]))
 	{
-		if (ft_status(data, philos))
+		if (ft_status(data, philos)
+			|| (data->must_eat > 0 && ft_maxmeal(data, philos)))
 		{
 			pthread_mutex_lock(&data->sim_stop_lock);
 			data->sim_stop = 1;
@@ -184,11 +185,15 @@ void	ft_threads(t_data *data, t_philo *philos)
  */
 int	main(int ac, char **av)
 {
-	t_data		*data;
-	t_philo		*philos;
+	t_data	*data;
+	t_philo	*philos;
 
 	if (ac != 5 && ac != 6)
 		return (ft_printf("Use: ./philo <# phs> <die> <eat> <slp> [max]\n"), 1);
+	if (ft_atoi(av[1]) <= 0 || ft_atoi(av[2]) <= 0
+		|| ft_atoi(av[3]) <= 0 || ft_atoi(av[4]) <= 0
+		|| (ac == 6 && ft_atoi(av[5]) <= 0))
+		return (ft_printf("These are not the args you were looking for\n"), 1);
 	data = ft_initdata(ac, av);
 	if (!data)
 		return (1);
@@ -196,12 +201,6 @@ int	main(int ac, char **av)
 	ft_threads(data, philos);
 	if (data->num_philos == 1)
 		return (ft_cleanup(data, philos), 0);
-	while (!ft_stoplock(philos))
-	{
-		if (data->must_eat > 0)
-			ft_maxmeal(data, philos);
-		usleep(100);
-	}
 	ft_cleanup(data, philos);
 	return (0);
 }

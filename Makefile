@@ -6,28 +6,30 @@
 #    By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/02 15:36:34 by eala-lah          #+#    #+#              #
-#    Updated: 2025/04/24 14:56:08 by eala-lah         ###   ########.fr        #
+#    Updated: 2025/05/01 17:29:44 by eala-lah         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME        = philo
-INCS        = -I ./inc/ -I ./libft/inc/
-LIBFT_DIR   = libft/
-LIBFT       = $(LIBFT_DIR)/libft.a
+NAME		= philo
+INCS		= -I ./inc/ -I ./libft/inc/
+LIBFT_DIR	= libft/
+LIBFT		= $(LIBFT_DIR)/libft.a
+TESTER_SH	= test_philo.sh
+TESTER_URL	= https://raw.githubusercontent.com/erkkaervice/area51/main/test_philo.sh
 
-SRC_DIR     = src/
-SRC         = \
+SRC_DIR		= src/
+SRC		= \
 	actions.c \
 	exit.c \
 	init.c \
 	main.c \
 
-OBJ_DIR     = obj/
-OBJS        = $(addprefix $(OBJ_DIR), $(SRC:.c=.o))
+OBJ_DIR		= obj/
+OBJS		= $(addprefix $(OBJ_DIR), $(SRC:.c=.o))
 
-CC          = gcc
-CFLAGS      = -Wall -Wextra -Werror $(INCS) -pthread -fPIC
-GIT_FLAGS   = git clone --depth 1
+CC			= gcc
+CFLAGS		= -Wall -Wextra -Werror $(INCS) -pthread -fPIC
+GIT_FLAGS	= git clone --depth 1
 
 all: $(LIBFT) $(OBJ_DIR) $(NAME)
 
@@ -47,6 +49,11 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.c inc/philo.h
 $(NAME): $(OBJS)
 	@$(CC) $(CFLAGS) -o $(NAME) $(OBJS) -L $(LIBFT_DIR) -lft 2> /dev/stderr || { echo "Failed to create executable $(NAME)." >&2; exit 1; }
 
+test:
+	@curl -s -L $(TESTER_URL) -o $(TESTER_SH) || { echo "Failed to download test_philo.sh"; exit 1; }
+	@chmod +x $(TESTER_SH) 2> /dev/null || { echo "Failed to make tester executable." >&2; exit 1; }
+	@./$(TESTER_SH)
+
 bonus: all
 
 clean:
@@ -56,7 +63,8 @@ clean:
 fclean: clean
 	@rm -f $(LIBFT) $(NAME) 2> /dev/stderr || { echo "Failed to remove generated files." >&2; exit 1; }
 	@rm -rf $(LIBFT_DIR) 2> /dev/stderr || { if [ -d "$(LIBFT_DIR)" ]; then echo "Failed to remove libft directory." >&2; exit 1; fi; }
+	@rm -f $(TESTER_SH) 2> /dev/null || { if [ -f "$(TESTER_SH)" ]; then echo "Failed to remove test_philo.sh." >&2; exit 1; fi; }
 
 re: fclean all
 
-.PHONY: all clean fclean re bonus
+.PHONY: all clean fclean re bonus test

@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:27 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/28 14:39:14 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/01 16:47:58 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,17 +106,18 @@ int	ft_maxmeal(t_data *data, t_philo *philos)
 	int	i;
 	int	eaten;
 
+	pthread_mutex_lock(&data->sim_stop_lock);
 	i = 0;
 	while (i < data->num_philos)
 	{
-		pthread_mutex_lock(&data->sim_stop_lock);
 		eaten = philos[i].meals_eaten;
-		pthread_mutex_unlock(&data->sim_stop_lock);
 		if (eaten < data->must_eat)
+		{
+			pthread_mutex_unlock(&data->sim_stop_lock);
 			return (0);
+		}
 		i++;
 	}
-	pthread_mutex_lock(&data->sim_stop_lock);
 	data->sim_stop = 1;
 	pthread_mutex_unlock(&data->sim_stop_lock);
 	return (1);
