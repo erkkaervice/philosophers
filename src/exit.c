@@ -6,26 +6,18 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:27 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/01 16:47:58 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/01 18:29:31 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 /*
- * ft_stoplock - Checks if the simulation should stop based on the stop flag.
+ * Checks if the simulation should stop based on the stop flag.
  *
  * This function locks the simulation stop mutex and checks whether the 
  * `sim_stop` flag is set to indicate the simulation should stop. If it is 
  * set, the function returns 1 to terminate the philosopher's routine.
- *
- * Parameters:
- * - philo: A pointer to the philosopher structure containing the relevant 
- *          data for the philosopher.
- *
- * Returns:
- * - 1 if the simulation should stop.
- * - 0 if the simulation can continue.
  */
 int	ft_stoplock(t_philo *philo)
 {
@@ -38,21 +30,12 @@ int	ft_stoplock(t_philo *philo)
 }
 
 /*
- * ft_reaper - Checks if a philosopher has died and stops the simulation.
+ * Checks if a philosopher has died and stops the simulation.
  *
  * This function checks if a philosopher has surpassed the allowed time to 
  * live by comparing the current time with the philosopher's last meal time. 
  * If the philosopher has died, it sets the `sim_stop` flag to 1, indicating 
  * the simulation should stop, and prints the death message.
- *
- * Parameters:
- * - data: The simulation data structure, which contains the time control 
- *         and simulation status.
- * - philo: A pointer to the philosopher structure to check for death.
- *
- * Returns:
- * - 1 if the philosopher has died and the simulation should stop.
- * - 0 if the philosopher is still alive.
  */
 int	ft_reaper(t_data *data, t_philo *philo)
 {
@@ -83,23 +66,13 @@ int	ft_reaper(t_data *data, t_philo *philo)
 }
 
 /*
- * ft_maxmeal - Checks if all philosophers have eaten the required number 
+ * Checks if all philosophers have eaten the required number 
  * of meals to stop the simulation.
  *
  * This function checks if every philosopher has eaten at least the number 
  * of meals specified by `must_eat`. If this condition is met for all 
  * philosophers, the simulation stop flag (`sim_stop`) is set to 1 to stop 
  * the simulation.
- *
- * Parameters:
- * - data: The simulation data structure, which contains the `must_eat` 
- *         condition and other control information.
- * - philos: An array of philosopher structures containing the number of 
- *           meals each philosopher has eaten.
- *
- * Returns:
- * - 1 if all philosophers have eaten the required number of meals.
- * - 0 if any philosopher still needs to eat more meals.
  */
 int	ft_maxmeal(t_data *data, t_philo *philos)
 {
@@ -124,24 +97,14 @@ int	ft_maxmeal(t_data *data, t_philo *philos)
 }
 
 /*
- * ft_status - Checks the status of the simulation to determine if it should 
+ * Checks the status of the simulation to determine if it should 
  * continue running.
  *
- * This function checks if any philosopher has died by calling the `ft_reaper` 
+ * This function checks if any philosopher has died by calling the appropriate 
  * function for each philosopher. It also checks whether the simulation should 
- * stop due to the `must_eat` condition, using the `ft_maxmeal` function if 
- * necessary. If either condition is met, the function will return 1 to stop 
+ * stop due to the `must_eat` condition, using the necessary logic if 
+ * required. If either condition is met, the function will return 1 to stop 
  * the simulation. 
- *
- * Parameters:
- * - data: The simulation data structure, which contains the `sim_stop` flag 
- *         and other control information.
- * - philos: An array of philosopher structures to check their current status.
- *
- * Returns:
- * - 1 if the simulation should stop (a philosopher has died or all have eaten 
- *   the required meals).
- * - 0 if the simulation should continue.
  */
 int	ft_status(t_data *data, t_philo *philos)
 {
@@ -162,18 +125,12 @@ int	ft_status(t_data *data, t_philo *philos)
 }
 
 /*
- * ft_cleanup - Frees memory and destroys mutexes after the simulation ends.
+ * Frees memory and destroys mutexes after the simulation ends.
  *
  * This function ensures that all dynamically allocated memory is freed, and
  * all mutexes used throughout the simulation are properly destroyed. This
- * includes cleaning up philosopher threads, mutexes used for forks, and
- * shared locks used for simulation control.
- *
- * Parameters:
- * - data: A pointer to the data structure containing simulation details.
- * - philos: A pointer to the array of philosopher structures.
+ * includes cleaning up philosopher
  */
-
 void	ft_cleanup(t_data *data, t_philo *philos)
 {
 	int	i;

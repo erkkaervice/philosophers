@@ -6,21 +6,17 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:49 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/01 17:30:00 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/01 19:24:52 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 /*
- * ft_solo - Simulates the behavior of a single philosopher.
+ * Simulates the behavior of a single philosopher.
  *
- * This function simulates the actions of a philosopher when there is only
- * one philosopher in the simulation. It locks and unlocks the philosopher's
- * fork and simulates the philosopher dying after a period of time.
- *
- * Parameters:
- * - philo: A pointer to the philosopher structure.
+ * If there is only one philosopher, the simulation locks the fork, 
+ * waits for the philosopher to die, and then signals the stop condition.
  */
 static void	ft_solo(t_philo *philo)
 {
@@ -35,15 +31,10 @@ static void	ft_solo(t_philo *philo)
 }
 
 /*
- * ft_wait - Waits for all philosopher threads to finish.
+ * Waits for all philosopher threads to finish.
  *
- * This function continuously checks the status of the simulation and stops
- * the threads when necessary. It waits for all philosopher threads to finish
- * by calling pthread_join on each one.
- *
- * Parameters:
- * - data: The simulation data.
- * - philos: The array of philosophers.
+ * Monitors the simulation status and waits for all philosopher threads 
+ * to complete by joining each one.
  */
 static void	ft_wait(t_data *data, t_philo *philos)
 {
@@ -71,26 +62,20 @@ static void	ft_wait(t_data *data, t_philo *philos)
 }
 
 /*
- * ft_routine - The main routine for each philosopher thread.
+ * Main routine for each philosopher thread.
  *
- * This function defines the behavior of each philosopher during the simulation.
- * The philosopher repeatedly eats and sleeps, while checking whether the
- * simulation should stop by calling ft_stoplock. Once the philosopher's
- * routine finishes, it signals that the thread is done.
- *
- * Parameters:
- * - arg: A pointer to the philosopher's data structure.
- *
- * Returns:
- * - NULL when the routine completes.
+ * Each philosopher repeatedly eats and sleeps while checking the stop 
+ * condition. Once the philosopher's routine finishes, it signals that 
+ * the thread is done.
  */
 static void	*ft_routine(void *arg)
 {
 	t_philo	*philo;
+	int		delay;
 
 	philo = (t_philo *)arg;
-	if (philo->id % 2 == 0)
-		usleep(2000);
+	delay = philo->data->time_to_eat * 1000 / philo->data->num_philos;
+	usleep((philo->id - 1) * delay);
 	while (!ft_stoplock(philo))
 	{
 		ft_eat(philo);
@@ -114,22 +99,10 @@ static void	*ft_routine(void *arg)
 }
 
 /*
- * ft_threads - Creates and manages philosopher threads for the simulation.
+ * Creates and manages philosopher threads for the simulation.
  *
- * This function initializes philosopher threads and starts the simulation.
- * It creates one thread for each philosopher, passing the routine function
- * (`ft_routine`) as the entry point. If thread creation fails partway,
- * it joins already-created threads to prevent leaks. After all threads are
- * created, the function waits for them to finish by calling ft_wait().
- *
- * For the special case of a single philosopher, it handles the routine
- * separately and signals completion safely under lock.
- *
- * Parameters:
- * - data: The simulation data containing the number of philosophers and
- *         other shared information.
- * - philos: An array of philosopher structures, each containing thread
- *           and synchronization data.
+ * Initializes and starts philosopher threads. Handles the special case 
+ * of a single philosopher separately.
  */
 void	ft_threads(t_data *data, t_philo *philos)
 {
@@ -161,27 +134,10 @@ void	ft_threads(t_data *data, t_philo *philos)
 }
 
 /*
- * main - The entry point of the simulation. Initializes data and philosophers,
- *        starts threads, and manages the simulation loop.
+ * Entry point of the simulation.
  *
- * The function handles validation of command-line arguments, initialization
- * of simulation data, and creation of philosopher threads. It starts the
- * simulation loop, which monitors the shared stop condition to determine
- * whether the simulation should continue running.
- *
- * In the special case of only one philosopher, it exits early after cleanup
- * since the philosopher would starve without a second fork.
- *
- * Once the stop condition is triggered (either a philosopher dies or all
- * have eaten the required number of times), it performs cleanup and exits.
- *
- * Parameters:
- * - ac: The argument count (should be 5 or 6).
- * - av: The argument values (parameters for simulation).
- *
- * Returns:
- * - 0 if the simulation completes successfully.
- * - 1 if the arguments are invalid or an error occurs during initialization.
+ * Initializes the simulation, creates philosopher threads, and waits 
+ * for their completion. Handles the case of a single philosopher separately.
  */
 int	main(int ac, char **av)
 {

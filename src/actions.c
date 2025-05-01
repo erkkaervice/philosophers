@@ -6,36 +6,30 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 15:49:21 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/28 14:32:06 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/01 19:22:32 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 /*
- * ft_forks - Attempts to acquire both forks for a philosopher to eat.
+ * Attempts to acquire both forks for a philosopher to eat.
  *
- * This function locks the left and right forks for the philosopher, ensuring 
- * that no other philosopher can access the same forks at the same time. 
- * If the simulation is stopped during the process, it unlocks any acquired 
- * forks and returns 0 to indicate that the philosopher could not proceed.
- *
- * Parameters:
- * - philo: A pointer to the philosopher's data structure, containing 
- *          fork information.
- *
- * Returns:
- * - 1 if the philosopher successfully took both forks and can eat.
- * - 0 if the philosopher could not take both forks and cannot eat.
+ * Locks the left and right forks, ensuring no other philosopher 
+ * can access them simultaneously. If the simulation is stopped, 
+ * the forks are unlocked and the philosopher cannot proceed.
  */
 int	ft_forks(t_philo *philo)
 {
 	pthread_mutex_t	*first;
 	pthread_mutex_t	*second;
 
-	first = philo->left_fork;
-	second = philo->right_fork;
-	if (first > second)
+	if ((philo->id % 2) == 0)
+	{
+		first = philo->left_fork;
+		second = philo->right_fork;
+	}
+	else
 	{
 		first = philo->right_fork;
 		second = philo->left_fork;
@@ -57,23 +51,19 @@ int	ft_forks(t_philo *philo)
 }
 
 /*
- * ft_eat - Simulates the philosopher eating.
+ * Simulates the philosopher eating.
  *
- * This function handles the process of eating for the philosopher. It first 
- * checks whether the simulation should stop using `ft_stoplock`. If the 
- * philosopher successfully acquires both forks using `ft_forks`, it then 
- * sleeps for the duration of `time_to_eat`. After eating, it updates the 
- * number of meals eaten and releases the forks.
- *
- * Parameters:
- * - philo: A pointer to the philosopher's data structure, containing fork 
- *          and meal information.
+ * After successfully acquiring both forks, the philosopher eats 
+ * for a specified duration. The philosopher's meal count is updated, 
+ * and the forks are released once the eating phase is complete.
  */
 void	ft_eat(t_philo *philo)
 {
 	pthread_mutex_t	*first;
 	pthread_mutex_t	*second;
 
+	if ((philo->id % 2) == 1)
+		usleep(philo->data->time_to_eat * 1000 / 2);
 	first = philo->left_fork;
 	second = philo->right_fork;
 	if (first > second)
@@ -99,17 +89,10 @@ void	ft_eat(t_philo *philo)
 }
 
 /*
- * ft_sleepthink - Simulates the philosopher sleeping and thinking.
+ * Simulates the philosopher sleeping and thinking.
  *
- * This function handles the sleeping and thinking phases of the philosopher. 
- * After eating, the philosopher sleeps for the duration specified by 
- * `time_to_sleep`. After waking up, the philosopher will think, and this 
- * is logged. The function checks if the simulation should stop by calling 
- * `ft_stoplock` before proceeding with the sleep and think phases.
- *
- * Parameters:
- * - philo: A pointer to the philosopher's data structure, containing time 
- *          and state information.
+ * After eating, the philosopher sleeps for the specified duration. 
+ * Upon waking, the philosopher thinks, and the state is logged.
  */
 void	ft_sleepthink(t_philo *philo)
 {
@@ -131,18 +114,11 @@ void	ft_sleepthink(t_philo *philo)
 }
 
 /*
- * ft_printlog - Prints a log message for a philosopher's actions.
+ * Prints a log message for a philosopher's actions.
  *
- * This function formats and prints a log message indicating the philosopher's
- * action (e.g., taking a fork, eating, sleeping, thinking) along with the 
- * current time and philosopher's ID. The printing is done in a thread-safe 
- * manner using a mutex lock to ensure proper synchronization between threads.
- *
- * Parameters:
- * - data: The simulation data structure that holds the current start time 
- *         for time calculations.
- * - id: The philosopher's unique ID to include in the log message.
- * - msg: The action/message to log.
+ * The log message includes the current time, philosopher's ID, 
+ * and the action being performed. A mutex lock is used to ensure 
+ * thread-safe printing.
  */
 void	ft_printlog(t_philo *philo, char *msg)
 {
@@ -157,16 +133,10 @@ void	ft_printlog(t_philo *philo, char *msg)
 }
 
 /*
- * ft_time - Returns the current time in milliseconds 
- *           since the simulation start.
+ * Returns the current time in milliseconds since the simulation start.
  *
- * This function retrieves the current time using `gettimeofday`, 
- * calculates the time in milliseconds, and returns it. The time is 
- * used to track how long the philosophers have been running and to 
- * control their behavior (eating, sleeping, etc.).
- *
- * Returns:
- * - The current time in milliseconds.
+ * This function uses `gettimeofday` to retrieve the current time, 
+ * calculates the milliseconds, and returns it.
  */
 long long	ft_time(void)
 {

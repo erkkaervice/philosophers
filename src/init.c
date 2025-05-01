@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 15:30:10 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/04/29 14:59:47 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/01 18:53:12 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,18 @@
 /*
  * Initializes fork mutexes for each philosopher.
  *
- * Allocates memory for fork mutexes and initializes each one. If initialization
- * fails, already-initialized mutexes are destroyed, and memory is freed.
+ * Allocates exactly data->num_philos forks, initializes each one.
+ * On failure, already-inited mutexes are destroyed and memory freed.
  */
 static int	ft_initforks(t_data *data)
 {
 	int	i;
 
-	data->forks = malloc(sizeof(pthread_mutex_t) * (data->num_philos + 2));
+	data->forks = malloc(sizeof(pthread_mutex_t) * data->num_philos);
 	if (!data->forks)
 		return (ft_printf("What forks?\n"), 1);
 	i = 0;
-	while (i < data->num_philos + 2)
+	while (i < data->num_philos)
 	{
 		if (pthread_mutex_init(&data->forks[i], NULL) != 0)
 		{
@@ -67,7 +67,9 @@ static int	ft_initlocks(t_data *data)
 /*
  * Sets default values for each philosopher.
  *
- * Initializes philo fields, back-reference to data and assigns fork pointers.
+ * Assigns each philosopher its two forks in a true circle:
+ *   left  = forks[i]
+ *   right = forks[(i + 1) % num_philos]
  */
 static int	ft_initphilos(t_data *data, t_philo *philos)
 {
@@ -83,8 +85,8 @@ static int	ft_initphilos(t_data *data, t_philo *philos)
 		if (pthread_cond_init(&philos[i].done_cond, NULL) != 0)
 			return (ft_printf("Philo %d is in no condition.\n", i + 1), 1);
 		philos[i].data = data;
-		philos[i].left_fork = &data->forks[i + 1];
-		philos[i].right_fork = &data->forks[(i + 2) % data->num_philos];
+		philos[i].left_fork = &data->forks[i];
+		philos[i].right_fork = &data->forks[(i + 1) % data->num_philos];
 		i++;
 	}
 	return (0);
@@ -122,9 +124,8 @@ static t_data	*ft_initmemory(char **av)
 /*
  * Full initialization entry point for simulation.
  *
- * Calls ft_initmemory and validates time arguments. If any required argument
- * is non-positive, frees memory and returns NULL. Then initializes mutexes,
- * forks, and philosophers. On any failure, frees all memory and returns NULL.
+ * Calls ft_initmemory and initializes mutexes, forks, and philosophers.
+ * If any step fails, frees all memory and returns NULL.
  */
 t_data	*ft_initdata(int ac, char **av)
 {
