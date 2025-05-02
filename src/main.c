@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:49 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/01 19:24:52 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/02 15:04:31 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,16 +79,14 @@ static void	*ft_routine(void *arg)
 	while (!ft_stoplock(philo))
 	{
 		ft_eat(philo);
-		if (philo->data->must_eat > 0)
+		pthread_mutex_lock(&philo->data->sim_stop_lock);
+		if (philo->data->must_eat > 0
+			&& philo->meals_eaten >= philo->data->must_eat)
 		{
-			pthread_mutex_lock(&philo->data->sim_stop_lock);
-			if (philo->meals_eaten >= philo->data->must_eat)
-			{
-				pthread_mutex_unlock(&philo->data->sim_stop_lock);
-				break ;
-			}
 			pthread_mutex_unlock(&philo->data->sim_stop_lock);
+			break ;
 		}
+		pthread_mutex_unlock(&philo->data->sim_stop_lock);
 		ft_sleepthink(philo);
 	}
 	pthread_mutex_lock(&philo->data->sim_stop_lock);
