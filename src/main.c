@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:49 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/09 13:23:28 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/09 13:47:50 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ static void	ft_wait(t_data *data, t_philo *philos)
 			pthread_mutex_unlock(&data->sim_stop_lock);
 			break ;
 		}
-		usleep(50);
 	}
 	i = 0;
 	while (i < data->num_philos)
