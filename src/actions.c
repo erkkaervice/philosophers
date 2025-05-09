@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 15:49:21 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/02 15:26:12 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/09 11:38:10 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,31 +47,23 @@ int	ft_forks(t_philo *philo)
  */
 void	ft_eat(t_philo *philo)
 {
-	if ((philo->id % 2) == 1)
-		usleep(philo->data->time_to_eat * 1000 / 2);
 	if (ft_stoplock(philo))
 		return ;
-	ft_forks(philo);
-	if (ft_stoplock(philo))
-	{
-		pthread_mutex_unlock(philo->left_fork);
-		pthread_mutex_unlock(philo->right_fork);
+	if (!ft_forks(philo))
 		return ;
-	}
 	pthread_mutex_lock(&philo->data->last_meal_lock);
 	philo->last_meal = ft_time();
 	pthread_mutex_unlock(&philo->data->last_meal_lock);
 	ft_printlog(philo, "is eating");
-	usleep(philo->data->time_to_eat * 1000);
+	ft_usleep(philo->data->time_to_eat);
 	pthread_mutex_unlock(philo->right_fork);
 	pthread_mutex_unlock(philo->left_fork);
-	if (!ft_stoplock(philo) && (philo->data->must_eat < 0
+	pthread_mutex_lock(&philo->data->sim_stop_lock);
+	if (!philo->data->sim_stop
+		&& (philo->data->must_eat < 0
 			|| philo->meals_eaten < philo->data->must_eat))
-	{
-		pthread_mutex_lock(&philo->data->sim_stop_lock);
 		philo->meals_eaten++;
-		pthread_mutex_unlock(&philo->data->sim_stop_lock);
-	}
+	pthread_mutex_unlock(&philo->data->sim_stop_lock);
 }
 
 /*

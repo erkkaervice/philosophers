@@ -6,11 +6,20 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:49 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/02 15:04:31 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/09 11:36:23 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+void	ft_usleep(long long duration_ms)
+{
+	long long	start;
+
+	start = ft_time();
+	while (ft_time() - start < duration_ms)
+		usleep(50);
+}
 
 /*
  * Simulates the behavior of a single philosopher.
@@ -50,7 +59,7 @@ static void	ft_wait(t_data *data, t_philo *philos)
 			pthread_mutex_unlock(&data->sim_stop_lock);
 			break ;
 		}
-		usleep(500);
+		usleep(50);
 	}
 	i = 0;
 	while (i < data->num_philos)
@@ -71,11 +80,8 @@ static void	ft_wait(t_data *data, t_philo *philos)
 static void	*ft_routine(void *arg)
 {
 	t_philo	*philo;
-	int		delay;
 
-	philo = (t_philo *)arg;
-	delay = philo->data->time_to_eat * 1000 / philo->data->num_philos;
-	usleep((philo->id - 1) * delay);
+	philo = arg;
 	while (!ft_stoplock(philo))
 	{
 		ft_eat(philo);
