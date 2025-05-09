@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 15:49:21 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/09 13:20:15 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/09 15:32:48 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,20 +21,10 @@
  */
 int	ft_forks(t_philo *philo)
 {
-	if (philo->id % 2 == 0)
-	{
-		pthread_mutex_lock(philo->left_fork);
-		ft_printlog(philo, "has taken a fork");
-		pthread_mutex_lock(philo->right_fork);
-		ft_printlog(philo, "has taken a fork");
-	}
-	else
-	{
-		pthread_mutex_lock(philo->right_fork);
-		ft_printlog(philo, "has taken a fork");
-		pthread_mutex_lock(philo->left_fork);
-		ft_printlog(philo, "has taken a fork");
-	}
+	pthread_mutex_lock(philo->left_fork);
+	ft_printlog(philo, "has taken a fork");
+	pthread_mutex_lock(philo->right_fork);
+	ft_printlog(philo, "has taken a fork");
 	return (1);
 }
 
@@ -47,22 +37,17 @@ int	ft_forks(t_philo *philo)
  */
 void	ft_eat(t_philo *philo)
 {
-	if (ft_stoplock(philo))
-		return ;
-	if (!ft_forks(philo))
+	if (ft_stoplock(philo) || !ft_forks(philo))
 		return ;
 	pthread_mutex_lock(&philo->data->last_meal_lock);
 	philo->last_meal = ft_time();
+	philo->meals_eaten++;
 	pthread_mutex_unlock(&philo->data->last_meal_lock);
 	ft_printlog(philo, "is eating");
 	ft_usleep(philo->data->time_to_eat);
 	pthread_mutex_unlock(philo->right_fork);
 	pthread_mutex_unlock(philo->left_fork);
 	pthread_mutex_lock(&philo->data->sim_stop_lock);
-	if (!philo->data->sim_stop
-		&& (philo->data->must_eat < 0
-			|| philo->meals_eaten < philo->data->must_eat))
-		philo->meals_eaten++;
 	pthread_mutex_unlock(&philo->data->sim_stop_lock);
 }
 
@@ -74,18 +59,10 @@ void	ft_eat(t_philo *philo)
  */
 void	ft_sleepthink(t_philo *philo)
 {
-	long long	start_time;
-
 	if (ft_stoplock(philo))
 		return ;
 	ft_printlog(philo, "is sleeping");
-	start_time = ft_time();
-	while (ft_time() - start_time < philo->data->time_to_sleep)
-	{
-		if (ft_stoplock(philo))
-			return ;
-		ft_usleep(philo->data->time_to_sleep);
-	}
+	ft_usleep(philo->data->time_to_sleep);
 	if (ft_stoplock(philo))
 		return ;
 	ft_printlog(philo, "is thinking");

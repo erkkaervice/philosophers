@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:49 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/09 13:47:50 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/09 15:37:29 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	ft_usleep(long long duration_ms)
 
 	start = ft_time();
 	while (ft_time() - start < duration_ms)
-		usleep(50);
+		usleep(100);
 }
 
 /*
@@ -81,6 +81,10 @@ static void	*ft_routine(void *arg)
 	t_philo	*philo;
 
 	philo = arg;
+	if (philo->id % 2 == 0)
+		usleep(50);
+	philo->last_meal = ft_time();
+	philo->data->start_time = philo->last_meal;
 	while (!ft_stoplock(philo))
 	{
 		ft_eat(philo);
