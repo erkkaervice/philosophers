@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:49 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/09 11:36:23 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/09 13:23:28 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static void	ft_solo(t_philo *philo)
 {
 	pthread_mutex_lock(philo->left_fork);
 	ft_printlog(philo, "has taken a fork");
-	usleep(philo->data->time_to_die * 1000);
+	ft_usleep(philo->data->time_to_die);
 	ft_printlog(philo, "died");
 	pthread_mutex_unlock(philo->left_fork);
 	pthread_mutex_lock(&philo->data->sim_stop_lock);

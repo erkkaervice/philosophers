@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 15:49:21 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/09 11:38:10 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/09 13:20:15 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ void	ft_sleepthink(t_philo *philo)
 	{
 		if (ft_stoplock(philo))
 			return ;
-		usleep(50);
+		ft_usleep(philo->data->time_to_sleep);
 	}
 	if (ft_stoplock(philo))
 		return ;
