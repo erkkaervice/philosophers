@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:49 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/09 15:37:29 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/12 14:31:25 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,9 +82,10 @@ static void	*ft_routine(void *arg)
 
 	philo = arg;
 	if (philo->id % 2 == 0)
-		usleep(50);
+		ft_usleep(philo->data->time_to_eat / 2);
+	pthread_mutex_lock(&philo->data->last_meal_lock);
 	philo->last_meal = ft_time();
-	philo->data->start_time = philo->last_meal;
+	pthread_mutex_unlock(&philo->data->last_meal_lock);
 	while (!ft_stoplock(philo))
 	{
 		ft_eat(philo);
@@ -161,6 +162,7 @@ int	main(int ac, char **av)
 	if (!data)
 		return (1);
 	philos = data->philos;
+	data->start_time = ft_time();
 	ft_threads(data, philos);
 	if (data->num_philos == 1)
 		return (ft_cleanup(data, philos), 0);
