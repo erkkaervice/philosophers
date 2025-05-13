@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:49 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/12 14:31:25 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/13 13:32:35 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,13 @@ void	ft_usleep(long long duration_ms)
 	long long	start;
 
 	start = ft_time();
+	if (duration_ms <= 5)
+	{
+		usleep(duration_ms * 1000);
+		return ;
+	}
 	while (ft_time() - start < duration_ms)
-		usleep(100);
+		usleep(500);
 }
 
 /*
