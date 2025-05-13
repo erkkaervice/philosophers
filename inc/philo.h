@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:41 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/09 11:37:17 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/13 14:27:09 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,7 @@ void		ft_sleepthink(t_philo *philo);
 /* --- Simulation Control and Monitoring ---
  * Functions for checking the philosophers' status and stopping the simulation.
  */
+void		ft_threads(t_data *data, t_philo *philos);
 int			ft_status(t_data *data, t_philo *philos);
 int			ft_stoplock(t_philo *philo);
 int			ft_maxmeal(t_data *data, t_philo *philos);

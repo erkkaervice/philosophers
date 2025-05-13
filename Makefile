@@ -6,7 +6,7 @@
 #    By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/02 15:36:34 by eala-lah          #+#    #+#              #
-#    Updated: 2025/05/01 17:29:44 by eala-lah         ###   ########.fr        #
+#    Updated: 2025/05/13 14:42:00 by eala-lah         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,6 +22,7 @@ SRC		= \
 	actions.c \
 	exit.c \
 	init.c \
+	simulation.c \
 	main.c \
 
 OBJ_DIR		= obj/
