@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:49 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/13 14:56:58 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/13 18:40:40 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 int	main(int ac, char **av)
 {
 	t_data	*data;
-	t_philo	*philos;
+	int		i;
 
 	if (ac != 5 && ac != 6)
 		return (ft_printf("Use: ./philo <# phs> <die> <eat> <slp> [max]\n"), 1);
@@ -32,10 +32,7 @@ int	main(int ac, char **av)
 	data = ft_initdata(ac, av);
 	if (!data)
 		return (1);
-	philos = data->philos;
-	ft_threads(data, philos);
-	if (data->num_philos == 1)
-		return (ft_cleanup(data, philos), 0);
-	ft_cleanup(data, philos);
+	ft_threads(data, data->philos);
+	ft_cleanup(data, data->philos);
 	return (0);
 }

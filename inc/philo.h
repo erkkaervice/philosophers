@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:41 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/13 16:20:08 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/13 17:34:48 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,8 +78,8 @@ typedef struct s_data
 	int				time_to_die;
 	int				time_to_eat;
 	int				time_to_sleep;
-	int				sim_stop;
 	int				must_eat;
+	int				sim_stop;
 	pthread_mutex_t	write_lock;
 	pthread_mutex_t	sim_stop_lock;
 	pthread_mutex_t	last_meal_lock;

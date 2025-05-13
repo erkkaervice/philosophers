@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 14:26:25 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/13 16:40:11 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/13 18:33:35 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	ft_usleep(t_philo *philo, long long duration_ms)
  * Simulates the behavior of a single philosopher.
  *
  * If there is only one philosopher, the simulation locks the fork, 
- * waits for the philosopher to die, and then signals the stop condition.
+ * waits for the philosopher to die.
  */
 static void	ft_solo(t_philo *philo)
 {
@@ -52,9 +52,6 @@ static void	ft_solo(t_philo *philo)
 	ft_usleep(philo, philo->data->time_to_die);
 	ft_printlog(philo, "died");
 	pthread_mutex_unlock(philo->left_fork);
-	pthread_mutex_lock(&philo->data->sim_stop_lock);
-	philo->data->sim_stop = 1;
-	pthread_mutex_unlock(&philo->data->sim_stop_lock);
 }
 
 /*
@@ -132,14 +129,7 @@ void	ft_threads(t_data *data, t_philo *philos)
 	int	i;
 
 	if (data->num_philos == 1)
-	{
-		ft_solo(&philos[0]);
-		pthread_mutex_lock(&philos[0].data->sim_stop_lock);
-		philos[0].thread_done = 1;
-		pthread_cond_signal(&philos[0].done_cond);
-		pthread_mutex_unlock(&philos[0].data->sim_stop_lock);
-		return ;
-	}
+		return (ft_solo(&philos[0]));
 	i = 0;
 	while (i < data->num_philos)
 	{

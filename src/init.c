@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 15:30:10 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/01 18:53:12 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/13 17:34:40 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ static int	ft_initphilos(t_data *data, t_philo *philos)
  * Allocates memory for the data struct and philosopher array. Assigns
  * arguments to simulation parameters. On failure, prints error.
  */
-static t_data	*ft_initmemory(char **av)
+static t_data	*ft_initmemory(int ac, char **av)
 {
 	t_data	*data;
 
@@ -110,8 +110,11 @@ static t_data	*ft_initmemory(char **av)
 	data->time_to_die = ft_atoi(av[2]);
 	data->time_to_eat = ft_atoi(av[3]);
 	data->time_to_sleep = ft_atoi(av[4]);
+	if (ac == 6)
+		data->must_eat = ft_atoi(av[5]);
+	else
+		data->must_eat = -1;
 	data->sim_stop = 0;
-	data->must_eat = -1;
 	data->philos = malloc(sizeof(t_philo) * data->num_philos);
 	if (!data->philos)
 	{
@@ -131,11 +134,9 @@ t_data	*ft_initdata(int ac, char **av)
 {
 	t_data	*data;
 
-	data = ft_initmemory(av);
+	data = ft_initmemory(ac, av);
 	if (!data)
 		return (NULL);
-	if (ac == 6)
-		data->must_eat = ft_atoi(av[5]);
 	if (ft_initforks(data)
 		|| ft_initlocks(data)
 		|| ft_initphilos(data, data->philos))
