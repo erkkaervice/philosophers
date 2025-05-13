@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:41 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/13 14:27:09 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/13 16:20:08 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,6 @@ int			ft_maxmeal(t_data *data, t_philo *philos);
  * Function for cleaning up the simulation after it ends.
  */
 void		ft_cleanup(t_data *data, t_philo *philos);
-void		ft_usleep(long long duration_ms);
+void		ft_usleep(t_philo *philo, long long duration_ms);
 
 #endif

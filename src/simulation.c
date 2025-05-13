@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 14:26:25 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/13 15:44:39 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/13 16:40:11 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
  * to repeatedly call `usleep` for 500ms until the desired duration is reached.
  * This approach ensures more accurate timing without consuming too much CPU.
  */
-void	ft_usleep(long long duration_ms)
+void	ft_usleep(t_philo *philo, long long duration_ms)
 {
 	long long	start;
 
@@ -32,7 +32,11 @@ void	ft_usleep(long long duration_ms)
 		return ;
 	}
 	while (ft_time() - start < duration_ms)
+	{
+		if (ft_stoplock(philo))
+			break ;
 		usleep(500);
+	}
 }
 
 /*
@@ -45,7 +49,7 @@ static void	ft_solo(t_philo *philo)
 {
 	pthread_mutex_lock(philo->left_fork);
 	ft_printlog(philo, "has taken a fork");
-	ft_usleep(philo->data->time_to_die);
+	ft_usleep(philo, philo->data->time_to_die);
 	ft_printlog(philo, "died");
 	pthread_mutex_unlock(philo->left_fork);
 	pthread_mutex_lock(&philo->data->sim_stop_lock);
@@ -96,7 +100,7 @@ static void	*ft_routine(void *arg)
 
 	philo = arg;
 	if (philo->id % 2 == 0)
-		ft_usleep(philo->data->time_to_eat / 2);
+		ft_usleep(philo, philo->data->time_to_eat / 2);
 	while (!ft_stoplock(philo))
 	{
 		ft_eat(philo);
