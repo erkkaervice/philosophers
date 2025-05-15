@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 14:26:25 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/13 18:33:35 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/15 16:15:56 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	ft_usleep(t_philo *philo, long long duration_ms)
 	{
 		if (ft_stoplock(philo))
 			break ;
-		usleep(500);
+		usleep(100);
 	}
 }
 
@@ -52,6 +52,9 @@ static void	ft_solo(t_philo *philo)
 	ft_usleep(philo, philo->data->time_to_die);
 	ft_printlog(philo, "died");
 	pthread_mutex_unlock(philo->left_fork);
+	pthread_mutex_lock(&philo->data->sim_stop_lock);
+	philo->data->sim_stop = 1;
+	pthread_mutex_unlock(&philo->data->sim_stop_lock);
 }
 
 /*
@@ -79,8 +82,7 @@ static void	ft_wait(t_data *data, t_philo *philos)
 	while (i < data->num_philos)
 	{
 		if (philos[i].thread)
-			pthread_join(philos[i].thread, NULL);
-		i++;
+			pthread_join(philos[i++].thread, NULL);
 	}
 }
 
