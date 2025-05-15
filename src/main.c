@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:49 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/13 18:40:40 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/15 14:52:49 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@
 int	main(int ac, char **av)
 {
 	t_data	*data;
-	int		i;
 
 	if (ac != 5 && ac != 6)
 		return (ft_printf("Use: ./philo <# phs> <die> <eat> <slp> [max]\n"), 1);
