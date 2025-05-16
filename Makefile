@@ -6,7 +6,7 @@
 #    By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/02 15:36:34 by eala-lah          #+#    #+#              #
-#    Updated: 2025/05/13 14:42:00 by eala-lah         ###   ########.fr        #
+#    Updated: 2025/05/16 14:31:06 by eala-lah         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -65,6 +65,7 @@ fclean: clean
 	@rm -f $(LIBFT) $(NAME) 2> /dev/stderr || { echo "Failed to remove generated files." >&2; exit 1; }
 	@rm -rf $(LIBFT_DIR) 2> /dev/stderr || { if [ -d "$(LIBFT_DIR)" ]; then echo "Failed to remove libft directory." >&2; exit 1; fi; }
 	@rm -f $(TESTER_SH) 2> /dev/null || { if [ -f "$(TESTER_SH)" ]; then echo "Failed to remove test_philo.sh." >&2; exit 1; fi; }
+	@rm -rf logs 2> /dev/null || { if [ -d "logs" ]; then echo "Failed to remove logs directory." >&2; exit 1; fi; }
 
 re: fclean all
 

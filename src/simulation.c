@@ -6,19 +6,19 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 14:26:25 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/15 16:15:56 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/16 14:25:25 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 /*
- * Simulates a delay in milliseconds by repeatedly calling `usleep` 
+ * Simulates a delay in milliseconds by repeatedly calling usleep 
  * to avoid excessive CPU usage.
  *
  * If the requested duration is less than or equal to 5ms, a single 
- * `usleep` call is used to minimize overhead. Otherwise, a loop is used 
- * to repeatedly call `usleep` for 500ms until the desired duration is reached.
+ * usleep call is used to minimize overhead. Otherwise, a loop is used 
+ * to repeatedly call usleep for 100ms until the desired duration is reached.
  * This approach ensures more accurate timing without consuming too much CPU.
  */
 void	ft_usleep(t_philo *philo, long long duration_ms)
@@ -139,6 +139,9 @@ void	ft_threads(t_data *data, t_philo *philos)
 				ft_routine, &philos[i]) != 0)
 		{
 			ft_printf("Error creating thread for philo %d\n", i);
+			pthread_mutex_lock(&data->sim_stop_lock);
+			data->sim_stop = 1;
+			pthread_mutex_unlock(&data->sim_stop_lock);
 			while (i-- > 0)
 				pthread_join(philos[i].thread, NULL);
 			return ;

@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 15:49:21 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/15 16:07:53 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/16 13:38:47 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,9 +52,11 @@ void	ft_eat(t_philo *philo)
 		return ;
 	pthread_mutex_lock(&philo->data->last_meal_lock);
 	philo->last_meal = ft_time();
-	philo->meals_eaten++;
 	pthread_mutex_unlock(&philo->data->last_meal_lock);
 	ft_printlog(philo, "is eating");
+	pthread_mutex_lock(&philo->data->last_meal_lock);
+	philo->meals_eaten++;
+	pthread_mutex_unlock(&philo->data->last_meal_lock);
 	ft_usleep(philo, philo->data->time_to_eat);
 	pthread_mutex_unlock(philo->right_fork);
 	pthread_mutex_unlock(philo->left_fork);
@@ -102,7 +104,7 @@ void	ft_printlog(t_philo *philo, char *msg)
 /*
  * Returns the current time in milliseconds since the simulation start.
  *
- * This function uses `gettimeofday` to retrieve the current time, 
+ * This function uses gettimeofday to retrieve the current time, 
  * calculates the milliseconds, and returns it.
  */
 long long	ft_time(void)

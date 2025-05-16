@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 15:30:10 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/15 16:04:46 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/16 14:25:25 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,14 +138,21 @@ t_data	*ft_initdata(int ac, char **av)
 	data = ft_initmemory(ac, av);
 	if (!data)
 		return (NULL);
-	if (ft_initforks(data)
-		|| ft_initlocks(data)
-		|| ft_initphilos(data, data->philos))
+	if (ft_initforks(data))
+		return (free(data), NULL);
+	if (ft_initlocks(data))
 	{
-		free(data->philos);
 		free(data->forks);
-		free(data);
-		return (NULL);
+		return (free(data), NULL);
+	}
+	if (ft_initphilos(data, data->philos))
+	{
+		pthread_mutex_destroy(&data->write_lock);
+		pthread_mutex_destroy(&data->sim_stop_lock);
+		pthread_mutex_destroy(&data->last_meal_lock);
+		free(data->forks);
+		free(data->philos);
+		return (free(data), NULL);
 	}
 	return (data);
 }
