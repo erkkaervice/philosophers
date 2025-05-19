@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 14:26:25 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/19 12:48:24 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/19 15:55:23 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,18 +24,22 @@
 void	ft_usleep(t_philo *philo, long long duration_ms)
 {
 	long long	start;
+	long long	elapsed;
 
 	start = ft_time();
-	if (duration_ms <= 5)
+	while (1)
 	{
-		usleep(duration_ms * 1000);
-		return ;
-	}
-	while (ft_time() - start < duration_ms)
-	{
+		elapsed = ft_time() - start;
+		if (elapsed >= duration_ms)
+			break ;
 		if (ft_stoplock(philo))
 			break ;
-		usleep(100);
+		if (duration_ms - elapsed > 10)
+			usleep(4200);
+		else if (duration_ms - elapsed > 2)
+			usleep(420);
+		else
+			usleep(42);
 	}
 }
 
@@ -69,8 +73,7 @@ static void	ft_wait(t_data *data, t_philo *philos)
 
 	while (!ft_stoplock(&philos[0]))
 	{
-		if (ft_status(data, philos)
-			|| (data->must_eat > 0 && ft_maxmeal(data, philos)))
+		if (ft_status(data, philos))
 		{
 			pthread_mutex_lock(&data->sim_stop_lock);
 			data->sim_stop = 1;
@@ -97,13 +100,19 @@ static void	ft_wait(t_data *data, t_philo *philos)
 static void	*ft_routine(void *arg)
 {
 	t_philo	*philo;
+	int		last_samurai;
 
 	philo = arg;
-	if (philo->id % 2 == 0)
+	last_samurai = philo->data->num_philos;
+	if (philo->id % 2 == 0 && !ft_stoplock(philo))
 		ft_sleepthink(philo);
+	else if (philo->id == last_samurai && !ft_stoplock(philo))
+		ft_printlog(philo, "is thinking");
 	while (!ft_stoplock(philo))
 	{
 		ft_eat(philo);
+		if (ft_stoplock(philo))
+			break ;
 		ft_sleepthink(philo);
 	}
 	return (NULL);
@@ -121,9 +130,11 @@ void	ft_threads(t_data *data, t_philo *philos)
 
 	if (data->num_philos == 1)
 		return (ft_solo(&philos[0]));
+	data->start_time = ft_time();
 	i = 0;
 	while (i < data->num_philos)
 	{
+		philos[i].last_meal = data->start_time;
 		if (pthread_create(&philos[i].thread, NULL,
 				ft_routine, &philos[i]) != 0)
 		{

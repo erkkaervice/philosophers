@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:27 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/16 15:49:52 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/19 15:03:56 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,14 +77,14 @@ int	ft_reaper(t_data *data, t_philo *philo)
 int	ft_maxmeal(t_data *data, t_philo *philos)
 {
 	int		i;
-	int		eaten;
 
+	if (ft_stoplock(&philos[0]))
+		return (1);
 	i = 0;
 	pthread_mutex_lock(&data->last_meal_lock);
 	while (i < data->num_philos)
 	{
-		eaten = philos[i].meals_eaten;
-		if (eaten < data->must_eat)
+		if (philos[i].meals_eaten < data->must_eat)
 		{
 			pthread_mutex_unlock(&data->last_meal_lock);
 			return (0);
@@ -112,7 +112,7 @@ int	ft_status(t_data *data, t_philo *philos)
 {
 	int	i;
 
-	if (data->must_eat > 0 && ft_maxmeal(data, philos))
+	if (ft_stoplock(&philos[0]))
 		return (1);
 	i = 0;
 	while (i < data->num_philos)
@@ -121,6 +121,8 @@ int	ft_status(t_data *data, t_philo *philos)
 			return (1);
 		i++;
 	}
+	if (data->must_eat > 0 && ft_maxmeal(data, philos))
+		return (1);
 	return (0);
 }
 

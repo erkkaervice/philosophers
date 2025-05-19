@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 15:49:21 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/19 12:48:23 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/19 15:44:26 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,6 @@
 int	ft_forks(t_philo *philo)
 {
 	pthread_mutex_lock(philo->left_fork);
-	if (ft_stoplock(philo))
-	{
-		pthread_mutex_unlock(philo->left_fork);
-		return (0);
-	}
-	ft_printlog(philo, "has taken a fork");
 	pthread_mutex_lock(philo->right_fork);
 	if (ft_stoplock(philo))
 	{
@@ -35,6 +29,7 @@ int	ft_forks(t_philo *philo)
 		pthread_mutex_unlock(philo->left_fork);
 		return (0);
 	}
+	ft_printlog(philo, "has taken a fork");
 	ft_printlog(philo, "has taken a fork");
 	return (1);
 }
@@ -54,10 +49,10 @@ void	ft_eat(t_philo *philo)
 	philo->last_meal = ft_time();
 	pthread_mutex_unlock(&philo->data->last_meal_lock);
 	ft_printlog(philo, "is eating");
+	ft_usleep(philo, philo->data->time_to_eat);
 	pthread_mutex_lock(&philo->data->last_meal_lock);
 	philo->meals_eaten++;
 	pthread_mutex_unlock(&philo->data->last_meal_lock);
-	ft_usleep(philo, philo->data->time_to_eat);
 	pthread_mutex_unlock(philo->right_fork);
 	pthread_mutex_unlock(philo->left_fork);
 }
@@ -90,8 +85,6 @@ void	ft_printlog(t_philo *philo, char *msg)
 {
 	long long	timestamp;
 
-	if (ft_stoplock(philo))
-		return ;
 	pthread_mutex_lock(&philo->data->write_lock);
 	if (!ft_stoplock(philo))
 	{

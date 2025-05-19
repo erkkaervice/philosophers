@@ -1,0 +1,18 @@
+----- TRACE BEGINS -----
+
+-- Basic Error Tests --
+
+-- One Philosopher Tests --
+
+-- SMALL NO DEATH TESTS --
+
+11 900 150 90 20: Philosophers took too many forks
+
+-- LARGE NO DEATH TESTS --
+
+200 410 200 200 5: Philosopher died
+
+-- Death Tests --
+
+---- TRACE ENDS ----
+
