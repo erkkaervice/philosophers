@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 14:26:25 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/16 14:25:25 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/19 12:48:24 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,8 @@ static void	ft_wait(t_data *data, t_philo *philos)
 	while (i < data->num_philos)
 	{
 		if (philos[i].thread)
-			pthread_join(philos[i++].thread, NULL);
+			pthread_join(philos[i].thread, NULL);
+		i++;
 	}
 }
 
@@ -99,24 +100,12 @@ static void	*ft_routine(void *arg)
 
 	philo = arg;
 	if (philo->id % 2 == 0)
-		ft_usleep(philo, philo->data->time_to_eat / 2);
+		ft_sleepthink(philo);
 	while (!ft_stoplock(philo))
 	{
 		ft_eat(philo);
-		pthread_mutex_lock(&philo->data->sim_stop_lock);
-		if (philo->data->must_eat > 0
-			&& philo->meals_eaten >= philo->data->must_eat)
-		{
-			pthread_mutex_unlock(&philo->data->sim_stop_lock);
-			break ;
-		}
-		pthread_mutex_unlock(&philo->data->sim_stop_lock);
 		ft_sleepthink(philo);
 	}
-	pthread_mutex_lock(&philo->data->sim_stop_lock);
-	philo->thread_done = 1;
-	pthread_cond_signal(&philo->done_cond);
-	pthread_mutex_unlock(&philo->data->sim_stop_lock);
 	return (NULL);
 }
 

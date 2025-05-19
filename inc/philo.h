@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:41 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/13 17:34:48 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/19 12:32:59 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,8 @@
  *   upon philosopher creation, but updates during eating.
  * - id: Number identifier for each philosopher.
  * - meals_eaten: The number of meals the philosopher has eaten.
- * - thread_done: Flag indicating whether the philosopher has completed
  *   necessary actions, such as eating or dying, and can finish its thread.
  * - thread: The philosopher's thread object used for synchronization.
- * - done_cond: Condition variable used for synchronizing thread completion
  *   by allowing philosophers to signal when they are finished eating or
  *   need to exit.
  * - left_fork, right_fork: Pointers to the mutexes representing the
@@ -45,9 +43,7 @@ typedef struct s_philo
 	long long		last_meal;
 	int				id;
 	int				meals_eaten;
-	int				thread_done;
 	pthread_t		thread;
-	pthread_cond_t	done_cond;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
 	struct s_data	*data;
@@ -61,8 +57,7 @@ typedef struct s_philo
  * - time_to_sleep: The time a philosopher sleeps after eating.
  * - sim_stop: Flag to indicate if the simulation should stop.
  * - must_eat: Global condition that dictates how many times each philosopher
- *   must eat before the simulation ends. It is checked by the philosophers
- *   as part of the termination condition.
+ *   must eat before the simulation ends.
  * - write_lock: Mutex used to synchronize logging operations.
  * - sim_stop_lock: Mutex used to safely check and modify the sim_stop flag.
  * - last_meal_lock: Mutex used to protect access to philosophers' last meal.
@@ -104,6 +99,7 @@ void		ft_sleepthink(t_philo *philo);
  * Functions for checking the philosophers' status and stopping the simulation.
  */
 void		ft_threads(t_data *data, t_philo *philos);
+void		ft_usleep(t_philo *philo, long long duration_ms);
 int			ft_status(t_data *data, t_philo *philos);
 int			ft_stoplock(t_philo *philo);
 int			ft_maxmeal(t_data *data, t_philo *philos);
@@ -112,6 +108,5 @@ int			ft_maxmeal(t_data *data, t_philo *philos);
  * Function for cleaning up the simulation after it ends.
  */
 void		ft_cleanup(t_data *data, t_philo *philos);
-void		ft_usleep(t_philo *philo, long long duration_ms);
 
 #endif

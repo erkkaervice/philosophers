@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:27 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/16 13:35:54 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/16 15:49:52 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,16 +139,7 @@ void	ft_cleanup(t_data *data, t_philo *philos)
 	{
 		i = 0;
 		while (i < data->num_philos)
-		{
-			pthread_mutex_lock(&philos[i].data->sim_stop_lock);
-			while (!philos[i].thread_done)
-				pthread_cond_wait(&philos[i].done_cond,
-					&philos[i].data->sim_stop_lock);
-			pthread_mutex_unlock(&philos[i].data->sim_stop_lock);
-			pthread_mutex_destroy(&data->forks[i]);
-			pthread_cond_destroy(&philos[i].done_cond);
-			i++;
-		}
+			pthread_mutex_destroy(&data->forks[i++]);
 	}
 	if (philos)
 		free(philos);

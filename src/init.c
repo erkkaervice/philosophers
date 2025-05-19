@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 15:30:10 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/16 14:25:25 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/19 11:31:34 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,13 +81,10 @@ static int	ft_initphilos(t_data *data, t_philo *philos)
 		philos[i].last_meal = ft_time();
 		philos[i].id = i + 1;
 		philos[i].meals_eaten = 0;
-		philos[i].thread_done = 0;
-		if (pthread_cond_init(&philos[i].done_cond, NULL) != 0)
-			return (ft_printf("Philo %d is in no condition.\n", i + 1), 1);
 		philos[i].thread = 0;
-		philos[i].data = data;
 		philos[i].left_fork = &data->forks[i];
 		philos[i].right_fork = &data->forks[(i + 1) % data->num_philos];
+		philos[i].data = data;
 		i++;
 	}
 	return (0);
