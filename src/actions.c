@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 15:49:21 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/23 16:05:16 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/23 16:16:15 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,11 @@
 int	ft_forks(t_philo *philo)
 {
 	pthread_mutex_lock(philo->left_fork);
+	if (ft_stoplock(philo))
+	{
+		pthread_mutex_unlock(philo->left_fork);
+		return (0);
+	}
 	pthread_mutex_lock(philo->right_fork);
 	if (ft_stoplock(philo))
 	{
