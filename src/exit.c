@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:27 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/23 12:55:26 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/23 16:02:16 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ int	ft_reaper(t_data *data, t_philo *philo)
 		data->sim_stop = 1;
 		pthread_mutex_unlock(&data->sim_stop_lock);
 		pthread_mutex_lock(&data->write_lock);
-		ft_printf("%d %d died\n",
+		printf("%d %d died\n",
 			(int)(current_time - data->start_time), philo->id);
 		pthread_mutex_unlock(&data->write_lock);
 	}

@@ -6,14 +6,12 @@
 #    By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/02 15:36:34 by eala-lah          #+#    #+#              #
-#    Updated: 2025/05/16 14:31:06 by eala-lah         ###   ########.fr        #
+#    Updated: 2025/05/23 16:01:28 by eala-lah         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		= philo
-INCS		= -I ./inc/ -I ./libft/inc/
-LIBFT_DIR	= libft/
-LIBFT		= $(LIBFT_DIR)/libft.a
+INCS		= -I ./inc/
 TESTER_SH	= test_philo.sh
 TESTER_URL	= https://raw.githubusercontent.com/erkkaervice/area51/main/test_philo.sh
 
@@ -30,25 +28,17 @@ OBJS		= $(addprefix $(OBJ_DIR), $(SRC:.c=.o))
 
 CC			= gcc
 CFLAGS		= -Wall -Wextra -Werror $(INCS) -pthread -fPIC
-GIT_FLAGS	= git clone --depth 1
 
-all: $(LIBFT) $(OBJ_DIR) $(NAME)
+all: $(OBJ_DIR) $(NAME)
 
 $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR) 2> /dev/null || { echo "Failed to create object directory." >&2; exit 1; }
-
-$(LIBFT):
-	@if [ ! -d "$(LIBFT_DIR)" ]; then \
-		$(GIT_FLAGS) https://github.com/erkkaervice/libft.git $(LIBFT_DIR) > /dev/null 2>&1 || { echo "Failed to clone libft repository." >&2; exit 1; }; \
-	fi
-	@make -C $(LIBFT_DIR) CFLAGS="-Wall -Wextra -Werror -fPIC -I ./inc/" > /dev/null 2>&1 || { echo "Failed to build libft library." >&2; exit 1; }
-	@rm -f $(LIBFT_DIR)/README.md > /dev/null 2>&1 || { echo "Failed to remove README.md." >&2; exit 1; }
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c inc/philo.h
 	@$(CC) $(CFLAGS) -c $< -o $@ 2> /dev/stderr || { echo "Failed to compile $<." >&2; exit 1; }
 
 $(NAME): $(OBJS)
-	@$(CC) $(CFLAGS) -o $(NAME) $(OBJS) -L $(LIBFT_DIR) -lft 2> /dev/stderr || { echo "Failed to create executable $(NAME)." >&2; exit 1; }
+	@$(CC) $(CFLAGS) -o $(NAME) $(OBJS) 2> /dev/stderr || { echo "Failed to create executable $(NAME)." >&2; exit 1; }
 
 test:
 	@curl -s -L $(TESTER_URL) -o $(TESTER_SH) || { echo "Failed to download test_philo.sh"; exit 1; }
@@ -59,11 +49,9 @@ bonus: all
 
 clean:
 	@rm -rf $(OBJ_DIR) 2> /dev/null || { echo "Failed to clean object files." >&2; exit 1; }
-	@make -C $(LIBFT_DIR) clean > /dev/null 2>&1 || { if [ -d "$(LIBFT_DIR)" ]; then echo "Failed to clean libft." >&2; exit 1; fi; }
 
 fclean: clean
-	@rm -f $(LIBFT) $(NAME) 2> /dev/stderr || { echo "Failed to remove generated files." >&2; exit 1; }
-	@rm -rf $(LIBFT_DIR) 2> /dev/stderr || { if [ -d "$(LIBFT_DIR)" ]; then echo "Failed to remove libft directory." >&2; exit 1; fi; }
+	@rm -f $(NAME) 2> /dev/stderr || { echo "Failed to remove executable." >&2; exit 1; }
 	@rm -f $(TESTER_SH) 2> /dev/null || { if [ -f "$(TESTER_SH)" ]; then echo "Failed to remove test_philo.sh." >&2; exit 1; fi; }
 	@rm -rf logs 2> /dev/null || { if [ -d "logs" ]; then echo "Failed to remove logs directory." >&2; exit 1; fi; }
 

@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 15:49:21 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/23 12:54:29 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/23 16:05:16 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ void	ft_printlog(t_philo *philo, char *msg)
 	if (!ft_stoplock(philo))
 	{
 		timestamp = ft_time() - philo->data->start_time;
-		ft_printf("%d %d %s\n", timestamp, philo->id, msg);
+		printf("%lld %d %s\n", timestamp, philo->id, msg);
 	}
 	pthread_mutex_unlock(&philo->data->write_lock);
 }

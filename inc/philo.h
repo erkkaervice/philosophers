@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:41 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/23 12:56:23 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/23 16:07:57 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,10 @@
  * - pthread for threads and sync
  * - sys/time for timing functions
  */
-# include "../libft/inc/libft.h"
+
+# include <unistd.h>
+# include <stdio.h>
+# include <stdlib.h>
 # include <pthread.h>
 # include <sys/time.h>
 
@@ -82,6 +85,7 @@ void		ft_usleep(t_philo *philo, long long duration_ms);
 int			ft_status(t_data *data, t_philo *philos);
 int			ft_stoplock(t_philo *philo);
 int			ft_maxmeal(t_data *data, t_philo *philos);
+int			ft_atoi(char const *str);
 
 /* Cleanup simulation resources */
 void		ft_cleanup(t_data *data, t_philo *philos);

@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 15:30:10 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/23 12:48:08 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/23 16:02:16 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static int	ft_initforks(t_data *data)
 
 	data->forks = malloc(sizeof(pthread_mutex_t) * data->num_philos);
 	if (!data->forks)
-		return (ft_printf("What forks?\n"), 1);
+		return (printf("What forks?\n"), 1);
 	i = 0;
 	while (i < data->num_philos)
 	{
@@ -33,7 +33,7 @@ static int	ft_initforks(t_data *data)
 			while (i-- > 0)
 				pthread_mutex_destroy(&data->forks[i]);
 			free(data->forks);
-			return (ft_printf("Failed mutex for fork %d\n", i), 1);
+			return (printf("Failed mutex for fork %d\n", i), 1);
 		}
 		i++;
 	}
@@ -49,17 +49,17 @@ static int	ft_initforks(t_data *data)
 static int	ft_initlocks(t_data *data)
 {
 	if (pthread_mutex_init(&data->write_lock, NULL) != 0)
-		return (ft_printf("Failed mutex for write_lock\n"), 1);
+		return (printf("Failed mutex for write_lock\n"), 1);
 	if (pthread_mutex_init(&data->sim_stop_lock, NULL) != 0)
 	{
 		pthread_mutex_destroy(&data->write_lock);
-		return (ft_printf("Failed mutex for sim_stop_lock\n"), 1);
+		return (printf("Failed mutex for sim_stop_lock\n"), 1);
 	}
 	if (pthread_mutex_init(&data->last_meal_lock, NULL) != 0)
 	{
 		pthread_mutex_destroy(&data->write_lock);
 		pthread_mutex_destroy(&data->sim_stop_lock);
-		return (ft_printf("Failed mutex for last_meal_lock\n"), 1);
+		return (printf("Failed mutex for last_meal_lock\n"), 1);
 	}
 	return (0);
 }
@@ -102,7 +102,7 @@ static t_data	*ft_initmemory(int ac, char **av)
 
 	data = malloc(sizeof(t_data));
 	if (!data)
-		return (ft_printf("What data?\n"), NULL);
+		return (printf("What data?\n"), NULL);
 	data->start_time = ft_time();
 	data->num_philos = ft_atoi(av[1]);
 	data->time_to_die = ft_atoi(av[2]);
@@ -117,7 +117,7 @@ static t_data	*ft_initmemory(int ac, char **av)
 	if (!data->philos)
 	{
 		free(data);
-		return (ft_printf("What philosophers?\n"), NULL);
+		return (printf("What philosophers?\n"), NULL);
 	}
 	return (data);
 }

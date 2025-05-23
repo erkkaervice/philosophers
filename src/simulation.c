@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 14:26:25 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/23 12:53:08 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/23 16:02:16 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,7 @@ void	ft_threads(t_data *data, t_philo *philos)
 		if (pthread_create(&philos[i].thread, NULL,
 				ft_routine, &philos[i]) != 0)
 		{
-			ft_printf("Error creating thread for philo %d\n", i);
+			printf("Error creating thread for philo %d\n", i);
 			pthread_mutex_lock(&data->sim_stop_lock);
 			data->sim_stop = 1;
 			pthread_mutex_unlock(&data->sim_stop_lock);
