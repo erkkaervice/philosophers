@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:41 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/23 16:07:57 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/23 16:14:34 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
  * - pthread for threads and sync
  * - sys/time for timing functions
  */
-
 # include <unistd.h>
 # include <stdio.h>
 # include <stdlib.h>
