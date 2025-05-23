@@ -6,17 +6,17 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:49 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/19 13:18:13 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/23 12:47:34 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 /*
- * Entry point of the simulation.
+ * Entry point of the program.
  *
- * Initializes the simulation, creates philosopher threads, and waits 
- * for their completion. Handles the case of a single philosopher separately.
+ * Validates input arguments, initializes simulation data, launches
+ * philosopher threads, and performs cleanup after the simulation.
  */
 int	main(int ac, char **av)
 {

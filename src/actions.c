@@ -6,18 +6,18 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 15:49:21 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/19 15:44:26 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/23 12:54:29 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 /*
- * Attempts to acquire both forks for a philosopher to eat.
+ * Attempts to acquire both forks for a philosopher.
  *
- * Locks the left and right forks, ensuring no other philosopher 
- * can access them simultaneously. If the simulation is stopped, 
- * the forks are unlocked and the philosopher cannot proceed.
+ * Locks left and right forks. If the simulation stopped, unlocks 
+ * forks immediately and returns 0 to indicate failure.
+ * Logs fork pickup twice on success.
  */
 int	ft_forks(t_philo *philo)
 {
@@ -35,11 +35,11 @@ int	ft_forks(t_philo *philo)
 }
 
 /*
- * Simulates the philosopher eating.
+ * Simulates eating for a philosopher.
  *
- * After successfully acquiring both forks, the philosopher eats 
- * for a specified duration. The philosopher's meal count is updated, 
- * and the forks are released once the eating phase is complete.
+ * Checks stop condition and fork acquisition. Updates last meal time 
+ * and meal count with mutex protection. Sleeps for eating duration 
+ * and releases forks after eating.
  */
 void	ft_eat(t_philo *philo)
 {
@@ -58,10 +58,10 @@ void	ft_eat(t_philo *philo)
 }
 
 /*
- * Simulates the philosopher sleeping and thinking.
+ * Simulates sleeping and thinking phases.
  *
- * After eating, the philosopher sleeps for the specified duration. 
- * Upon waking, the philosopher thinks, and the state is logged.
+ * Logs sleep, sleeps for the configured duration, then logs thinking 
+ * unless the simulation is stopped in between.
  */
 void	ft_sleepthink(t_philo *philo)
 {
@@ -75,11 +75,10 @@ void	ft_sleepthink(t_philo *philo)
 }
 
 /*
- * Prints a log message for a philosopher's actions.
+ * Logs a philosopher's action in a thread-safe manner.
  *
- * The log message includes the current time, philosopher's ID, 
- * and the action being performed. A mutex lock is used to ensure 
- * thread-safe printing.
+ * Prints the timestamp relative to simulation start, philosopher ID, 
+ * and message, using a mutex to prevent output clashes.
  */
 void	ft_printlog(t_philo *philo, char *msg)
 {
@@ -95,10 +94,10 @@ void	ft_printlog(t_philo *philo, char *msg)
 }
 
 /*
- * Returns the current time in milliseconds since the simulation start.
+ * Returns current time in milliseconds.
  *
- * This function uses gettimeofday to retrieve the current time, 
- * calculates the milliseconds, and returns it.
+ * Uses gettimeofday to get the current time, converts it to 
+ * milliseconds, and returns the value.
  */
 long long	ft_time(void)
 {

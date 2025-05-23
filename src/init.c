@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 15:30:10 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/19 13:29:21 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/23 12:48:08 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 /*
  * Initializes fork mutexes for each philosopher.
  *
- * Allocates exactly data->num_philos forks, initializes each one.
- * On failure, already-inited mutexes are destroyed and memory freed.
+ * Allocates memory for forks and initializes one mutex per fork.
+ * On failure, destroys initialized mutexes and frees the fork array.
  */
 static int	ft_initforks(t_data *data)
 {
@@ -41,10 +41,10 @@ static int	ft_initforks(t_data *data)
 }
 
 /*
- * Initializes simulation synchronization locks.
+ * Initializes core simulation mutexes.
  *
- * Initializes write_lock, sim_stop_lock, and last_meal_lock. If any
- * initialization fails, previously-initialized mutexes are destroyed.
+ * Sets up write_lock, sim_stop_lock, and last_meal_lock in order.
+ * On failure, any previously initialized mutexes are cleaned up.
  */
 static int	ft_initlocks(t_data *data)
 {
@@ -65,11 +65,10 @@ static int	ft_initlocks(t_data *data)
 }
 
 /*
- * Sets default values for each philosopher.
+ * Assigns fork pointers and default values to each philosopher.
  *
- * Assigns each philosopher its two forks in a true circle:
- *   left  = forks[i]
- *   right = forks[(i + 1) % num_philos]
+ * Each philosopher receives left and right fork pointers in a circular
+ * arrangement. Also sets ID, meal counter, thread, and timestamp.
  */
 static int	ft_initphilos(t_data *data, t_philo *philos)
 {
@@ -91,10 +90,11 @@ static int	ft_initphilos(t_data *data, t_philo *philos)
 }
 
 /*
- * Allocates and fills core simulation data.
+ * Allocates and configures main simulation structures.
  *
- * Allocates memory for the data struct and philosopher array. Assigns
- * arguments to simulation parameters. On failure, prints error.
+ * Sets timing and configuration values from input arguments.
+ * Allocates memory for data and philosopher array. On failure,
+ * prints a descriptive error and returns NULL.
  */
 static t_data	*ft_initmemory(int ac, char **av)
 {
@@ -123,10 +123,11 @@ static t_data	*ft_initmemory(int ac, char **av)
 }
 
 /*
- * Full initialization entry point for simulation.
+ * Full initialization routine for the simulation.
  *
- * Calls ft_initmemory and initializes mutexes, forks, and philosophers.
- * If any step fails, frees all memory and returns NULL.
+ * Runs memory allocation, mutex and fork initialization, and 
+ * philosopher setup in order. On failure at any step, cleans up
+ * everything and returns NULL.
  */
 t_data	*ft_initdata(int ac, char **av)
 {

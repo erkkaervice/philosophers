@@ -6,18 +6,17 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:28:27 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/19 15:03:56 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/23 12:55:26 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 /*
- * Checks if the simulation should stop based on the stop flag.
+ * Checks if simulation stop flag is set.
  *
- * This function locks the simulation stop mutex and checks whether the 
- * sim_stop flag is set to indicate the simulation should stop. If it is 
- * set, the function returns 1 to terminate the philosopher's routine.
+ * Locks sim_stop mutex and returns the stop flag value. Used to 
+ * know if the simulation should terminate.
  */
 int	ft_stoplock(t_philo *philo)
 {
@@ -30,12 +29,10 @@ int	ft_stoplock(t_philo *philo)
 }
 
 /*
- * Checks if a philosopher has died and stops the simulation.
+ * Checks if a philosopher has died and stops simulation.
  *
- * This function checks if a philosopher has surpassed the allowed time to 
- * live by comparing the current time with the philosopher's last meal time. 
- * If the philosopher has died, it sets the sim_stop flag to 1, indicating 
- * the simulation should stop, and prints the death message.
+ * Compares current time with last meal time. If time_to_die exceeded, 
+ * sets sim_stop and prints death message with mutex protection.
  */
 int	ft_reaper(t_data *data, t_philo *philo)
 {
@@ -66,13 +63,10 @@ int	ft_reaper(t_data *data, t_philo *philo)
 }
 
 /*
- * Checks if all philosophers have eaten the required number 
- * of meals to stop the simulation.
+ * Checks if all philosophers have eaten required meals.
  *
- * This function checks if every philosopher has eaten at least the number 
- * of meals specified by must_eat. If this condition is met for all 
- * philosophers, the simulation stop flag (sim_stop) is set to 1 to stop 
- * the simulation.
+ * Locks last_meal mutex and checks each philosopher's meal count. 
+ * If all have reached must_eat, sets sim_stop to end simulation.
  */
 int	ft_maxmeal(t_data *data, t_philo *philos)
 {
@@ -99,14 +93,10 @@ int	ft_maxmeal(t_data *data, t_philo *philos)
 }
 
 /*
- * Checks the status of the simulation to determine if it should 
- * continue running.
+ * Checks simulation status for death or meal completion.
  *
- * This function checks if any philosopher has died by calling the appropriate 
- * function for each philosopher. It also checks whether the simulation should 
- * stop due to the must_eat condition, using the necessary logic if 
- * required. If either condition is met, the function will return 1 to stop 
- * the simulation. 
+ * Iterates all philosophers to check death with ft_reaper. Also 
+ * checks must_eat condition if set. Returns 1 if simulation should stop.
  */
 int	ft_status(t_data *data, t_philo *philos)
 {
@@ -127,11 +117,10 @@ int	ft_status(t_data *data, t_philo *philos)
 }
 
 /*
- * Frees memory and destroys mutexes after the simulation ends.
+ * Frees memory and destroys all mutexes after simulation.
  *
- * This function ensures that all dynamically allocated memory is freed, and
- * all mutexes used throughout the simulation are properly destroyed. This
- * includes cleaning up philosopher
+ * Destroys forks mutexes, frees philosopher array, destroys other 
+ * mutexes and frees data structures to clean up all resources.
  */
 void	ft_cleanup(t_data *data, t_philo *philos)
 {

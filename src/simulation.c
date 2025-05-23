@@ -6,7 +6,7 @@
 /*   By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 14:26:25 by eala-lah          #+#    #+#             */
-/*   Updated: 2025/05/19 15:55:23 by eala-lah         ###   ########.fr       */
+/*   Updated: 2025/05/23 12:53:08 by eala-lah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@
  * to avoid excessive CPU usage.
  *
  * If the requested duration is less than or equal to 5ms, a single 
- * usleep call is used to minimize overhead. Otherwise, a loop is used 
- * to repeatedly call usleep for 100ms until the desired duration is reached.
- * This approach ensures more accurate timing without consuming too much CPU.
+ * usleep call is used to minimize overhead. Otherwise, a loop calls 
+ * usleep for 5ms, 1ms, or 0.1ms intervals until the desired time elapses.
+ * This ensures accurate timing without wasting CPU cycles.
  */
 void	ft_usleep(t_philo *philo, long long duration_ms)
 {
@@ -35,19 +35,19 @@ void	ft_usleep(t_philo *philo, long long duration_ms)
 		if (ft_stoplock(philo))
 			break ;
 		if (duration_ms - elapsed > 10)
-			usleep(4200);
+			usleep(5000);
 		else if (duration_ms - elapsed > 2)
-			usleep(420);
+			usleep(1000);
 		else
-			usleep(42);
+			usleep(100);
 	}
 }
 
 /*
- * Simulates the behavior of a single philosopher.
+ * Handles the single philosopher case.
  *
- * If there is only one philosopher, the simulation locks the fork, 
- * waits for the philosopher to die.
+ * Locks the only fork, logs pickup, waits until death, then logs death,
+ * unlocks the fork, and stops the simulation.
  */
 static void	ft_solo(t_philo *philo)
 {
@@ -62,10 +62,10 @@ static void	ft_solo(t_philo *philo)
 }
 
 /*
- * Waits for all philosopher threads to finish.
+ * Waits for all philosopher threads to finish and monitors simulation.
  *
- * Monitors the simulation status and waits for all philosopher threads 
- * to complete by joining each one.
+ * Continuously checks if the simulation should stop due to death or 
+ * completion. When triggered, sets the stop flag and joins all threads.
  */
 static void	ft_wait(t_data *data, t_philo *philos)
 {
@@ -91,22 +91,20 @@ static void	ft_wait(t_data *data, t_philo *philos)
 }
 
 /*
- * Main routine for each philosopher thread.
+ * Main routine executed by each philosopher thread.
  *
- * Each philosopher repeatedly eats and sleeps while checking the stop 
- * condition. Once the philosopher's routine finishes, it signals that 
- * the thread is done.
+ * Even ID philosophers start by sleeping and thinking to stagger actions.
+ * The last philosopher starts thinking immediately.
+ * Then loops: eat, check stop, sleep and think, until stop condition.
  */
 static void	*ft_routine(void *arg)
 {
 	t_philo	*philo;
-	int		last_samurai;
 
 	philo = arg;
-	last_samurai = philo->data->num_philos;
 	if (philo->id % 2 == 0 && !ft_stoplock(philo))
 		ft_sleepthink(philo);
-	else if (philo->id == last_samurai && !ft_stoplock(philo))
+	else if (philo->id == philo->data->num_philos && !ft_stoplock(philo))
 		ft_printlog(philo, "is thinking");
 	while (!ft_stoplock(philo))
 	{
@@ -119,10 +117,12 @@ static void	*ft_routine(void *arg)
 }
 
 /*
- * Creates and manages philosopher threads for the simulation.
+ * Starts philosopher threads and manages simulation lifecycle.
  *
- * Initializes and starts philosopher threads. Handles the special case 
- * of a single philosopher separately.
+ * For a single philosopher, handles the solo case.
+ * Otherwise, sets start time and creates threads, initializing last_meal.
+ * On thread creation failure, stops simulation and joins created threads.
+ * Finally, waits for all threads to finish.
  */
 void	ft_threads(t_data *data, t_philo *philos)
 {
