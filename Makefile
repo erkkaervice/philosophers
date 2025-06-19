@@ -6,7 +6,7 @@
 #    By: eala-lah <eala-lah@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/02 15:36:34 by eala-lah          #+#    #+#              #
-#    Updated: 2025/05/26 12:23:56 by eala-lah         ###   ########.fr        #
+#    Updated: 2025/06/19 15:07:05 by eala-lah         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,7 @@ SRC		= \
 OBJ_DIR		= obj/
 OBJS		= $(addprefix $(OBJ_DIR), $(SRC:.c=.o))
 
-CC		= gcc
+CC		= cc
 CFLAGS		= -Wall -Wextra -Werror $(INCS) -pthread
 
 all: $(OBJ_DIR) $(NAME)
